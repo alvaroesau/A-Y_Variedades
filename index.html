@@ -3,421 +3,395 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tienda Online - A&Y Variedades</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>Tienda en Línea - Productos por Grupo</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #1a3a4d;
-      color: white;
-      margin: 0;
-      padding: 20px;
+      margin: 20px;
     }
-    h1, h2 {
-      color: #fcd000;
+    h1 {
       text-align: center;
     }
-    .grupos {
+    /* Contenedor grupos */
+    #grupos-container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 15px;
+      justify-content: center;
       margin-bottom: 30px;
     }
     .grupo {
-      background: #0c1e2c;
-      padding: 10px;
-      border-radius: 10px;
       cursor: pointer;
-      width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 140px;
       text-align: center;
-      transition: transform 0.3s, background-color 0.3s;
+      transition: box-shadow 0.3s;
+    }
+    .grupo:hover {
+      box-shadow: 0 0 8px #007bff;
     }
     .grupo img {
       width: 100%;
       height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 8px;
+      object-fit: contain;
+      background: #f9f9f9;
     }
-    .grupo:hover {
-      background-color: #fcd000;
-      color: #000;
-      transform: scale(1.05);
+    .grupo p {
+      margin: 8px 0;
+      font-weight: bold;
     }
-    .productos {
-      max-width: 600px;
-      margin: 0 auto 40px;
+
+    /* Contenedor productos */
+    #productos-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
     .producto {
-      background: #0c1e2c;
-      padding: 15px;
-      margin-bottom: 10px;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      width: 180px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 0 5px #ccc;
+      transition: box-shadow 0.3s;
+    }
+    .producto:hover {
+      box-shadow: 0 0 10px #28a745;
     }
     .producto img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 5px;
-      cursor: pointer;
+      width: 100%;
+      height: 130px;
+      object-fit: contain;
+      background: #fafafa;
     }
-    button {
-      background-color: #fcd000;
+    .producto h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1em;
+    }
+    .producto p.precio {
+      font-weight: bold;
+      color: #28a745;
+      margin: 5px 0 10px;
+      font-size: 1.1em;
+    }
+    .producto button {
+      padding: 8px 12px;
       border: none;
-      padding: 8px 15px;
+      background-color: #28a745;
+      color: white;
       border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
+      font-size: 0.95em;
     }
-    button:hover {
-      background-color: #e0b800;
+    .producto button:hover {
+      background-color: #218838;
     }
-    #carrito-icono {
+
+    /* Modal carrito */
+    #modal-carrito {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #0c1e2c;
-      border: 2px solid #fcd000;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 999;
-      color: white;
-      font-size: 24px;
-    }
-    #carrito-icono span {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 50%;
-    }
-    .modal {
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.5);
       display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: #0c1e2c;
-      padding: 25px;
+    #modal-carrito .contenido {
+      background: white;
       border-radius: 10px;
-      text-align: center;
-      color: white;
-      max-width: 400px;
       width: 90%;
-      box-shadow: 0 0 15px #fcd000;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
       position: relative;
     }
-    .modal-content input,
-    .modal-content textarea {
-      width: 100%;
-      font-size: 1rem;
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-      margin: 10px 0;
-      box-sizing: border-box;
-    }
-    .pedido-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
-      gap: 10px;
-    }
-    .pedido-item span {
-      flex: 2;
-      text-align: left;
-    }
-    .pedido-item .precio,
-    .pedido-item .subtotal {
-      flex: 1;
-      text-align: right;
-    }
-    .pedido-item input {
-      width: 50px;
-      margin: 0 10px;
+    #modal-carrito .contenido h2 {
+      margin-top: 0;
       text-align: center;
     }
-    .btn-flotante {
-      position: fixed;
-      bottom: 20px;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-      z-index: 9999;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .btn-flotante.wsp { right: 20px; background: #25d366; }
-    .btn-flotante.fb { right: 80px; background: #1877f2; }
-    #modal-imagen {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    #modal-imagen img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 10px;
-    }
-    .total {
+    #modal-carrito .cerrar {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
       font-weight: bold;
-      color: #fcd000;
-      margin-top: 15px;
+      font-size: 20px;
+      border: none;
+      background: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    table th {
+      background-color: #f0f0f0;
+    }
+    #total-general {
+      font-weight: bold;
+      font-size: 1.2em;
       text-align: right;
+      margin-top: 10px;
+    }
+    #abrir-carrito {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 50px;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      z-index: 1100;
+    }
+    #abrir-carrito:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 <body>
 
-<h1>Elige un grupo de productos</h1>
-<div id="carrito-icono" onclick="abrirResumen()">🛒<span id="contador-carrito">0</span></div>
-<div class="grupos" id="grupos-container"></div>
-<div class="productos" id="productos-container"></div>
+  <h1>Tienda en Línea</h1>
 
-<!-- Modal cantidad -->
-<div class="modal" id="modal-cantidad">
-  <div class="modal-content">
-    <h3 id="modal-producto-nombre">Producto</h3>
-    <input type="number" id="cantidad-input" min="1" value="1" />
-    <button id="agregar-carrito-btn">Agregar al carrito</button>
-    <button onclick="cerrarModal()">Cancelar</button>
+  <div id="grupos-container">
+    <!-- Grupos de productos se cargan aquí -->
   </div>
-</div>
 
-<!-- Modal resumen -->
-<div class="modal" id="modal-resumen">
-  <div class="modal-content">
-    <h3>Resumen del Pedido</h3>
-    <div id="lista-pedido">
-      <!-- Aquí va la lista dinámica -->
-      <div style="display:flex; font-weight:bold; gap:10px; margin-bottom:10px;">
-        <div style="flex:2; text-align:left;">Producto</div>
-        <div style="flex:1; text-align:right;">Precio Unitario</div>
-        <div style="flex:1; text-align:center;">Cantidad</div>
-        <div style="flex:1; text-align:right;">Subtotal</div>
-        <div style="flex:0.5;"></div>
-      </div>
+  <div id="productos-container">
+    <p style="text-align:center; color:#777;">Elige un grupo de producto para ver sus artículos.</p>
+  </div>
+
+  <button id="abrir-carrito" title="Ver carrito 🛒">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
+
+  <!-- Modal del carrito -->
+  <div id="modal-carrito">
+    <div class="contenido">
+      <button class="cerrar" title="Cerrar carrito">×</button>
+      <h2>Carrito de Compras</h2>
+      <table id="tabla-carrito">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th>Quitar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Items carrito -->
+        </tbody>
+      </table>
+      <div id="total-general">Total: $0.00</div>
     </div>
-    <div class="total" id="total-general">Total: $0.00</div>
-    <form id="formulario-pedido">
-      <input type="text" name="nombre" placeholder="Tu nombre" required />
-      <input type="tel" name="telefono" placeholder="Tu Número de contacto" required />
-      <textarea name="detalles" readonly rows="5" style="margin-top:10px;"></textarea>
-      <button type="submit" style="margin-top:15px;">Enviar Pedido</button>
-    </form>
-    <button onclick="cerrarResumen()" style="margin-top:15px;">Cerrar</button>
   </div>
-</div>
 
-<!-- Modal imagen -->
-<div id="modal-imagen" onclick="cerrarImagenAmpliada()">
-  <img id="imagen-ampliada" src="" alt="Vista ampliada" />
-</div>
+  <script>
+    // Datos grupos con imagenes
+    const grupos = [
+      { id: "mosquiteros", nombre: "Mosquiteros", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mosquitera2.webp" },
+      { id: "cosmeticos", nombre: "Cosméticos", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/cosmeticos.webp" },
+      { id: "extensiones", nombre: "Extensiones para cabello", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/extensiones.webp" },
+      { id: "bebe", nombre: "Accesorios para bebés", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/bebe.webp" },
+      { id: "escolares", nombre: "Productos escolares", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/productos_escolares.webp" },
+      { id: "mochilas", nombre: "Mochilas", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mochilas.webp" },
+      { id: "peluches", nombre: "Peluches", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/peluches.webp" },
+      { id: "muebleria", nombre: "Mueblería", img: "https://raw.githubusercontent.com/esauve/tupetok32/main/muebles.webp" }
+    ];
 
-<a href="https://wa.me/50374656746?text=Hola%2C%20quiero%20hacer%20un%20pedido" class="btn-flotante wsp" target="_blank"><i class="fab fa-whatsapp"></i></a>
-<a href="https://www.facebook.com/ay.variedades" class="btn-flotante fb" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    // Datos productos organizados por grupo
+    const productosPorGrupo = {
+      mosquiteros: [
+        { id: "m1", nombre: "Mosquitero Simple", precio: 25.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mosquitera2.webp" },
+        { id: "m2", nombre: "Mosquitero Doble", precio: 40.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mosquitera2.webp" }
+      ],
+      cosmeticos: [
+        { id: "c1", nombre: "Crema Facial", precio: 15.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/cosmeticos.webp" },
+        { id: "c2", nombre: "Labial Rojo", precio: 10.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/cosmeticos.webp" }
+      ],
+      extensiones: [
+        { id: "e1", nombre: "Extensión Lisa", precio: 55.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/extensiones.webp" },
+        { id: "e2", nombre: "Extensión Rizada", precio: 60.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/extensiones.webp" }
+      ],
+      bebe: [
+        { id: "b1", nombre: "Chupón", precio: 5.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/bebe.webp" },
+        { id: "b2", nombre: "Pañales", precio: 12.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/bebe.webp" }
+      ],
+      escolares: [
+        { id: "es1", nombre: "Cuaderno A5", precio: 3.50, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/productos_escolares.webp" },
+        { id: "es2", nombre: "Set de lápices", precio: 7.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/productos_escolares.webp" }
+      ],
+      mochilas: [
+        { id: "mo1", nombre: "Mochila Escolar", precio: 30.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mochilas.webp" },
+        { id: "mo2", nombre: "Mochila de Viaje", precio: 50.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/mochilas.webp" }
+      ],
+      peluches: [
+        { id: "p1", nombre: "Peluche Mediano", precio: 20.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/peluches.webp" },
+        { id: "p2", nombre: "Peluche Grande", precio: 35.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/peluches.webp" }
+      ],
+      muebleria: [
+        { id: "mu1", nombre: "Silla de Madera", precio: 70.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/muebles.webp" },
+        { id: "mu2", nombre: "Mesa Pequeña", precio: 120.00, img: "https://raw.githubusercontent.com/esauve/tupetok32/main/muebles.webp" }
+      ]
+    };
 
-<script>
-  // Datos con precios incluidos
-  const precios = {
-    "Mosquitero sencillo": 25.00,
-    "Mosquitero doble": 40.00,
-    "Labial": 7.50,
-    "Base": 15.00,
-    "Labial2": 8.00,
-    "Extensión rizada": 30.00,
-    "Chupete": 5.00,
-    "Cuaderno": 3.00,
-    "Mochila casual": 50.00,
-    "Osito": 12.00,
-    "frocen": 120.00,
-    "caty": 80.00,
-    "mesa1": 150.00,
-    "mesa2": 160.00,
-    "zapatera1": 70.00,
-    "zapatera2": 75.00,
-    "zapatera3": 90.00
-  };
+    // Carrito: objeto que almacenará { idProducto: { ...producto, cantidad } }
+    let carrito = {};
 
-  const imagenesGrupos = {
-    "Mosquiteros": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO1.jpg",
-    "Cosméticos": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
-    "Extensiones para cabello": "https://via.placeholder.com/150?text=Extensione",
-    "Accesorios para bebés": "https://via.placeholder.com/150?text=Bebés",
-    "Producto escolar": "https://via.placeholder.com/150?text=Escolar",
-    "Mochilas": "https://via.placeholder.com/150?text=Mochilas",
-    "Peluches": "https://via.placeholder.com/150?text=Peluches",
-    "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
-  };
+    // Referencias DOM
+    const gruposContainer = document.getElementById("grupos-container");
+    const productosContainer = document.getElementById("productos-container");
+    const modalCarrito = document.getElementById("modal-carrito");
+    const tablaCarritoBody = document.querySelector("#tabla-carrito tbody");
+    const totalGeneralElem = document.getElementById("total-general");
+    const contadorCarritoElem = document.getElementById("contador-carrito");
+    const abrirCarritoBtn = document.getElementById("abrir-carrito");
+    const cerrarModalBtn = modalCarrito.querySelector(".cerrar");
 
-  const imagenesProductos = {
-    "Mosquitero sencillo": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO2.jpg",
-    "Mosquitero doble": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO3.jpg",
-    "Labial": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/2.jpg",
-    "Base": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/3.jpg",
-    "Labial2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
-    "Extensión rizada": "https://via.placeholder.com/150?text=Extensión",
-    "Chupete": "https://via.placeholder.com/150?text=Chupete",
-    "Cuaderno": "https://via.placeholder.com/150?text=Cuaderno",
-    "Mochila casual": "https://via.placeholder.com/150?text=Mochila",
-    "Osito": "https://via.placeholder.com/150?text=Osito",
-    "frocen": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg",
-    "caty": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M2.jpg",
-    "mesa1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M3.jpg",
-    "mesa2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M4.jpg",
-    "zapatera1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M5.jpg",
-    "zapatera2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M6.jpg",
-    "zapatera3": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
-  };
-
-  const tienda = {
-    "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble"],
-    "Cosméticos": ["Labial", "Base", "Labial2"],
-    "Extensiones para cabello": ["Extensión rizada"],
-    "Accesorios para bebés": ["Chupete"],
-    "Producto escolar": ["Cuaderno"],
-    "Mochilas": ["Mochila casual"],
-    "Peluches": ["Osito"],
-    "Mueblería": ["frocen","caty","mesa1","mesa2","zapatera1","zapatera2","zapatera3"]
-  };
-
-  const gruposContainer = document.getElementById('grupos-container');
-  const productosContainer = document.getElementById('productos-container');
-  const modal = document.getElementById('modal-cantidad');
-  const modalProductoNombre = document.getElementById('modal-producto-nombre');
-  const cantidadInput = document.getElementById('cantidad-input');
-  const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
-  const contadorCarrito = document.getElementById('contador-carrito');
-  const modalResumen = document.getElementById('modal-resumen');
-  const listaPedido = document.getElementById('lista-pedido');
-  const formularioPedido = document.getElementById('formulario-pedido');
-  const textareaDetalles = formularioPedido.querySelector('textarea');
-  const totalGeneral = document.getElementById('total-general');
-  const modalImagen = document.getElementById('modal-imagen');
-  const imagenAmpliada = document.getElementById('imagen-ampliada');
-
-  let carrito = [];
-  let productoActual = null;
-
-  // Mostrar grupos
-  Object.keys(tienda).forEach(grupo => {
-    const div = document.createElement('div');
-    div.className = 'grupo';
-    div.innerHTML = `<img src="${imagenesGrupos[grupo]}" alt="${grupo}"><div>${grupo}</div>`;
-    div.addEventListener('click', () => mostrarProductos(grupo));
-    gruposContainer.appendChild(div);
-  });
-
-  function mostrarProductos(grupo) {
-    productosContainer.innerHTML = `<h2>${grupo}</h2>`;
-    tienda[grupo].forEach(producto => {
-      const imgURL = imagenesProductos[producto] || 'https://via.placeholder.com/150?text=Producto';
-      const precioProducto = precios[producto] ? `$${precios[producto].toFixed(2)}` : "Sin precio";
-      const div = document.createElement('div');
-      div.className = 'producto';
-      div.innerHTML = `
-        <div style="display:flex; align-items:center; gap:10px;">
-          <img src="${imgURL}" alt="${producto}" onclick="verImagen('${imgURL}')" />
-          <div>
-            <div>${producto}</div>
-            <div style="color:#fcd000; font-weight:bold;">${precioProducto}</div>
-          </div>
-        </div>
-        <button onclick="abrirModal('${producto}')">Pedir</button>
-      `;
-      productosContainer.appendChild(div);
-    });
-  }
-
-  function abrirModal(producto) {
-    productoActual = producto;
-    modalProductoNombre.textContent = producto;
-    cantidadInput.value = 1;
-    modal.classList.add('active');
-  }
-
-  function cerrarModal() {
-    modal.classList.remove('active');
-  }
-
-  function verImagen(url) {
-    imagenAmpliada.src = url;
-    modalImagen.style.display = 'flex';
-  }
-
-  function cerrarImagenAmpliada() {
-    modalImagen.style.display = 'none';
-  }
-
-  agregarCarritoBtn.addEventListener('click', () => {
-    const cantidad = parseInt(cantidadInput.value);
-    if (!cantidad || cantidad < 1) return alert("Ingrese una cantidad válida");
-    const existente = carrito.find(p => p.producto === productoActual);
-    if (existente) {
-      existente.cantidad += cantidad;
-    } else {
-      carrito.push({ producto: productoActual, cantidad });
+    // Mostrar grupos de productos
+    function mostrarGrupos() {
+      gruposContainer.innerHTML = "";
+      grupos.forEach(grupo => {
+        const div = document.createElement("div");
+        div.classList.add("grupo");
+        div.dataset.id = grupo.id;
+        div.innerHTML = `
+          <img src="${grupo.img}" alt="${grupo.nombre}" />
+          <p>${grupo.nombre}</p>
+        `;
+        div.addEventListener("click", () => {
+          mostrarProductos(grupo.id);
+        });
+        gruposContainer.appendChild(div);
+      });
     }
-    cerrarModal();
-    actualizarContador();
-  });
 
-  function actualizarContador() {
-    const total = carrito.reduce((sum, p) => sum + p.cantidad, 0);
-    contadorCarrito.textContent = total;
-  }
+    // Mostrar productos según grupo seleccionado
+    function mostrarProductos(idGrupo) {
+      productosContainer.innerHTML = ""; // limpia antes
+      const productos = productosPorGrupo[idGrupo];
+      if (!productos || productos.length === 0) {
+        productosContainer.innerHTML = "<p style='text-align:center;'>No hay productos para mostrar.</p>";
+        return;
+      }
+      productos.forEach(producto => {
+        const div = document.createElement("div");
+        div.classList.add("producto");
+        div.innerHTML = `
+          <img src="${producto.img}" alt="${producto.nombre}" />
+          <h3>${producto.nombre}</h3>
+          <p class="precio">$${producto.precio.toFixed(2)}</p>
+          <button data-id="${producto.id}">Agregar al carrito</button>
+        `;
+        // Agregar evento para botón "Agregar al carrito"
+        div.querySelector("button").addEventListener("click", () => {
+          agregarAlCarrito(producto);
+        });
+        productosContainer.appendChild(div);
+      });
+    }
 
-  function abrirResumen() {
-    listaPedido.innerHTML = `<div style="display:flex; font-weight:bold; gap:10px; margin-bottom:10px;">
-        <div style="flex:2; text-align:left;">Producto</div>
-        <div style="flex:1; text-align:right;">Precio Unitario</div>
-        <div style="flex:1; text-align:center;">Cantidad</div>
-        <div style="flex:1; text-align:right;">Subtotal</div>
-        <div style="flex:0.5;"></div>
-      </div>`;
-    let total = 0;
-    carrito.forEach((item, index) => {
-      const precioUnit = precios[item.producto] || 0;
-      const subtotal = precioUnit * item.cantidad;
-      total += subtotal;
-      const div = document.createElement('div');
-      div.className = 'pedido-item';
-      div.innerHTML = `
-        <span>${item.producto}</span>
-        <span class="precio">$${precioUnit.toFixed(2)}</span>
-        <input type="number" value="${item.cantidad}" min="1" onchange="cambiar
+    // Agregar producto al carrito
+    function agregarAlCarrito(producto) {
+      if (carrito[producto.id]) {
+        carrito[producto.id].cantidad += 1;
+      } else {
+        carrito[producto.id] = {
+          ...producto,
+          cantidad: 1
+        };
+      }
+      actualizarContadorCarrito();
+      actualizarTablaCarrito();
+      abrirModalCarrito();
+    }
+
+    // Actualizar contador del carrito (mostrar cantidad total de productos)
+    function actualizarContadorCarrito() {
+      let totalCant = 0;
+      Object.values(carrito).forEach(item => {
+        totalCant += item.cantidad;
+      });
+      contadorCarritoElem.textContent = totalCant;
+    }
+
+    // Actualizar tabla del carrito en modal
+    function actualizarTablaCarrito() {
+      tablaCarritoBody.innerHTML = "";
+      let total = 0;
+
+      for (const key in carrito) {
+        const item = carrito[key];
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${item.nombre}</td>
+          <td>${item.cantidad}</td>
+          <td>$${item.precio.toFixed(2)}</td>
+          <td>$${subtotal.toFixed(2)}</td>
+          <td><button class="btn-quitar" data-id="${item.id}">X</button></td>
+        `;
+        // Evento para quitar producto del carrito
+        fila.querySelector(".btn-quitar").addEventListener("click", () => {
+          quitarDelCarrito(item.id);
+        });
+
+        tablaCarritoBody.appendChild(fila);
+      }
+      totalGeneralElem.textContent = `Total: $${total.toFixed(2)}`;
+    }
+
+    // Quitar producto del carrito
+    function quitarDelCarrito(idProducto) {
+      if (carrito[idProducto]) {
+        carrito[idProducto].cantidad -= 1;
+        if (carrito[idProducto].cantidad <= 0) {
+          delete carrito[idProducto];
+        }
+        actualizarContadorCarrito();
+        actualizarTablaCarrito();
+      }
+    }
+
+    // Abrir modal carrito
+    function abrirModalCarrito() {
+      modalCarrito.style.display = "flex";
+    }
+    // Cerrar modal carrito
+    function cerrarModalCarrito() {
+      modalCarrito.style.display = "none";
+    }
+
+    // Eventos para abrir y cerrar modal
+    abrirCarritoBtn.addEventListener("click", abrirModalCarrito);
+    cerrarModalBtn.addEventListener("click", cerrarModalCarrito);
+    modalCarrito.addEventListener("click", (e) => {
+      if (e.target === modalCarrito) cerrarModalCarrito();
+    });
+
+    // Inicializar
+    mostrarGrupos();
+  </script>
+</body>
+</html>
