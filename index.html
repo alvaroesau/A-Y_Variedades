@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tienda Online</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tienda Online - A&Y Variedades</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
@@ -32,7 +32,6 @@
       width: 150px;
       text-align: center;
       transition: transform 0.3s, background-color 0.3s;
-      user-select: none;
     }
     .grupo img {
       width: 100%;
@@ -45,7 +44,6 @@
       background-color: #fcd000;
       color: #000;
       transform: scale(1.05);
-      font-weight: bold;
     }
     .productos {
       max-width: 600px;
@@ -60,20 +58,12 @@
       justify-content: space-between;
       align-items: center;
     }
-    .producto-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
     .producto img {
       width: 60px;
       height: 60px;
       object-fit: cover;
       border-radius: 5px;
       cursor: pointer;
-    }
-    .producto span {
-      display: block;
     }
     button {
       background-color: #fcd000;
@@ -156,12 +146,14 @@
       margin-bottom: 10px;
       border-bottom: 1px solid #444;
       padding-bottom: 5px;
-      gap: 10px;
     }
-    .total {
-      font-weight: bold;
-      font-size: 1.1rem;
-      margin-top: 10px;
+    .pedido-item span {
+      flex: 1;
+      text-align: left;
+    }
+    .pedido-item input {
+      width: 50px;
+      margin: 0 10px;
     }
     .btn-flotante {
       position: fixed;
@@ -177,18 +169,15 @@
       text-decoration: none;
       z-index: 9999;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.2s;
     }
-    .btn-flotante:hover { transform: scale(1.1); }
     .btn-flotante.wsp { right: 20px; background: #25d366; }
     .btn-flotante.fb { right: 80px; background: #1877f2; }
     #modal-imagen {
       display: none;
       position: fixed;
       top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.8);
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
       z-index: 2000;
@@ -197,99 +186,237 @@
       max-width: 90vw;
       max-height: 90vh;
       border-radius: 10px;
-      box-shadow: 0 0 10px #fcd000;
+    }
+    .total {
+      font-weight: bold;
+      color: #fcd000;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-  <h1>Elige un grupo de productos</h1>
-  <div id="carrito-icono" onclick="abrirResumen()">🛒<span id="contador-carrito">0</span></div>
-  <div class="grupos" id="grupos-container"></div>
-  <div class="productos" id="productos-container"></div>
-  <div class="modal" id="modal-imagen"><img id="imagen-ampliada" src="" /></div>
-  <script>
-    const grupos = {
-      "Mosquiteros": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO1.jpg",
-      "Cosméticos": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
-      "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
-    };
 
-    const productos = {
-      "Mosquitero sencillo": { grupo: "Mosquiteros", precio: 4.00, img: "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO2.jpg" },
-      "Mosquitero doble": { grupo: "Mosquiteros", precio: 6.50, img: "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO3.jpg" },
-      "Labial": { grupo: "Cosméticos", precio: 2.25, img: "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/2.jpg" },
-      "Base": { grupo: "Cosméticos", precio: 3.50, img: "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/3.jpg" },
-      "Frocen": { grupo: "Mueblería", precio: 25.00, img: "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg" }
-    };
+<h1>Elige un grupo de productos</h1>
+<div id="carrito-icono" onclick="abrirResumen()">🛒<span id="contador-carrito">0</span></div>
+<div class="grupos" id="grupos-container"></div>
+<div class="productos" id="productos-container"></div>
 
-    const carrito = [];
-    const gruposContainer = document.getElementById('grupos-container');
-    const productosContainer = document.getElementById('productos-container');
-    const contadorCarrito = document.getElementById('contador-carrito');
-    const modalImagen = document.getElementById('modal-imagen');
-    const imagenAmpliada = document.getElementById('imagen-ampliada');
+<!-- Modal cantidad -->
+<div class="modal" id="modal-cantidad">
+  <div class="modal-content">
+    <h3 id="modal-producto-nombre">Producto</h3>
+    <input type="number" id="cantidad-input" min="1" value="1" />
+    <button id="agregar-carrito-btn">Agregar al carrito</button>
+    <button onclick="cerrarModal()">Cancelar</button>
+  </div>
+</div>
 
-    Object.entries(grupos).forEach(([nombre, img]) => {
+<!-- Modal resumen -->
+<div class="modal" id="modal-resumen">
+  <div class="modal-content">
+    <h3>Resumen del Pedido</h3>
+    <div id="lista-pedido"></div>
+    <div class="total" id="total-general"></div>
+    <form id="formulario-pedido">
+      <input type="text" name="nombre" placeholder="Tu nombre" required />
+      <input type="number" name="email" placeholder="Tu Número de contacto" required />
+      <textarea name="detalles" readonly></textarea>
+      <button type="submit">Enviar Pedido</button>
+    </form>
+    <button onclick="cerrarResumen()">Cerrar</button>
+  </div>
+</div>
+
+<!-- Modal imagen -->
+<div id="modal-imagen" onclick="cerrarImagenAmpliada()">
+  <img id="imagen-ampliada" src="" alt="Vista ampliada" />
+</div>
+
+<a href="https://wa.me/50374656746?text=Hola%2C%20quiero%20hacer%20un%20pedido" class="btn-flotante wsp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+<a href="https://www.facebook.com/ay.variedades" class="btn-flotante fb" target="_blank"><i class="fab fa-facebook-f"></i></a>
+
+<script>
+  const imagenesGrupos = {
+    "Mosquiteros": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO1.jpg",
+    "Cosméticos": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
+    "Extensiones para cabello": "https://via.placeholder.com/150?text=Extensione",
+    "Accesorios para bebés": "https://via.placeholder.com/150?text=Bebés",
+    "Producto escolar": "https://via.placeholder.com/150?text=Escolar",
+    "Mochilas": "https://via.placeholder.com/150?text=Mochilas",
+    "Peluches": "https://via.placeholder.com/150?text=Peluches",
+    "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
+  };
+
+  const imagenesProductos = {
+    "Mosquitero sencillo": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO2.jpg",
+    "Mosquitero doble": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO3.jpg",
+    "Labial": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/2.jpg",
+    "Base": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/3.jpg",
+    "Labial2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
+    "Extensión rizada": "https://via.placeholder.com/150?text=Extensión",
+    "Chupete": "https://via.placeholder.com/150?text=Chupete",
+    "Cuaderno": "https://via.placeholder.com/150?text=Cuaderno",
+    "Mochila casual": "https://via.placeholder.com/150?text=Mochila",
+    "Osito": "https://via.placeholder.com/150?text=Osito",
+    "frocen": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg",
+    "caty": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M2.jpg",
+    "mesa1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M3.jpg",
+    "mesa2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M4.jpg",
+    "zapatera1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M5.jpg",
+    "zapatera2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M6.jpg",
+    "zapatera3": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
+  };
+
+  const tienda = {
+    "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble"],
+    "Cosméticos": ["Labial", "Base", "Labial2"],
+    "Extensiones para cabello": ["Extensión rizada"],
+    "Accesorios para bebés": ["Chupete"],
+    "Producto escolar": ["Cuaderno"],
+    "Mochilas": ["Mochila casual"],
+    "Peluches": ["Osito"],
+    "Mueblería": ["frocen","caty","mesa1","mesa2","zapatera1","zapatera2","zapatera3"]
+  };
+
+  const gruposContainer = document.getElementById('grupos-container');
+  const productosContainer = document.getElementById('productos-container');
+  const modal = document.getElementById('modal-cantidad');
+  const modalProductoNombre = document.getElementById('modal-producto-nombre');
+  const cantidadInput = document.getElementById('cantidad-input');
+  const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
+  const contadorCarrito = document.getElementById('contador-carrito');
+  const modalResumen = document.getElementById('modal-resumen');
+  const listaPedido = document.getElementById('lista-pedido');
+  const formularioPedido = document.getElementById('formulario-pedido');
+  const textareaDetalles = formularioPedido.querySelector('textarea');
+  const totalGeneral = document.getElementById('total-general');
+  const modalImagen = document.getElementById('modal-imagen');
+  const imagenAmpliada = document.getElementById('imagen-ampliada');
+
+  let carrito = [];
+  let productoActual = null;
+
+  Object.keys(tienda).forEach(grupo => {
+    const div = document.createElement('div');
+    div.className = 'grupo';
+    div.innerHTML = `<img src="${imagenesGrupos[grupo]}" alt="${grupo}"><div>${grupo}</div>`;
+    div.addEventListener('click', () => mostrarProductos(grupo));
+    gruposContainer.appendChild(div);
+  });
+
+  function mostrarProductos(grupo) {
+    productosContainer.innerHTML = `<h2>${grupo}</h2>`;
+    tienda[grupo].forEach(producto => {
+      const imgURL = imagenesProductos[producto] || 'https://via.placeholder.com/150?text=Producto';
       const div = document.createElement('div');
-      div.className = 'grupo';
-      div.innerHTML = `<img src="${img}" alt="${nombre}"><div>${nombre}</div>`;
-      div.onclick = () => mostrarProductos(nombre);
-      gruposContainer.appendChild(div);
+      div.className = 'producto';
+      div.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img src="${imgURL}" alt="${producto}" onclick="verImagen('${imgURL}')" />
+          <span>${producto}</span>
+        </div>
+        <button onclick="abrirModal('${producto}')">Pedir</button>
+      `;
+      productosContainer.appendChild(div);
     });
+  }
 
-    function mostrarProductos(nombreGrupo) {
-      productosContainer.innerHTML = `<h2>${nombreGrupo}</h2>`;
-      Object.entries(productos).forEach(([nombre, datos]) => {
-        if (datos.grupo !== nombreGrupo) return;
-        const prod = document.createElement('div');
-        prod.className = 'producto';
-        prod.innerHTML = `
-          <div class="producto-info">
-            <img src="${datos.img}" onclick="ampliarImagen('${datos.img}')">
-            <span>${nombre}<br><small>$${datos.precio.toFixed(2)}</small></span>
-          </div>
-          <button onclick="agregarAlCarrito('${nombre}')">Agregar</button>
-        `;
-        productosContainer.appendChild(prod);
-      });
+  function abrirModal(producto) {
+    productoActual = producto;
+    modalProductoNombre.textContent = producto;
+    cantidadInput.value = 1;
+    modal.classList.add('active');
+  }
+
+  function cerrarModal() {
+    modal.classList.remove('active');
+  }
+
+  function verImagen(url) {
+    imagenAmpliada.src = url;
+    modalImagen.style.display = 'flex';
+  }
+
+  function cerrarImagenAmpliada() {
+    modalImagen.style.display = 'none';
+  }
+
+  agregarCarritoBtn.addEventListener('click', () => {
+    const cantidad = parseInt(cantidadInput.value);
+    if (!cantidad || cantidad < 1) return;
+    const existente = carrito.find(p => p.producto === productoActual);
+    if (existente) {
+      existente.cantidad += cantidad;
+    } else {
+      carrito.push({ producto: productoActual, cantidad });
     }
+    cerrarModal();
+    actualizarContador();
+  });
 
-    function agregarAlCarrito(nombre) {
-      const existente = carrito.find(p => p.nombre === nombre);
-      if (existente) {
-        existente.cantidad++;
-      } else {
-        carrito.push({ nombre, cantidad: 1 });
-      }
+  function actualizarContador() {
+    const total = carrito.reduce((sum, p) => sum + p.cantidad, 0);
+    contadorCarrito.textContent = total;
+  }
+
+  function abrirResumen() {
+    listaPedido.innerHTML = '';
+    let total = 0;
+    carrito.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'pedido-item';
+      const subtotal = item.cantidad * 1; // Puedes ajustar precios reales aquí
+      total += subtotal;
+      div.innerHTML = `
+        <span>${item.producto} x${item.cantidad}</span>
+        <input type="number" value="${item.cantidad}" min="1" onchange="cambiarCantidad(${index}, this.value)" />
+        <button onclick="eliminarProducto(${index})">Eliminar</button>
+      `;
+      listaPedido.appendChild(div);
+    });
+    totalGeneral.textContent = `Total: $${total.toFixed(2)}`;
+    textareaDetalles.value = carrito.map(p => `${p.producto} x${p.cantidad}`).join('\n');
+    modalResumen.classList.add('active');
+  }
+
+  function cerrarResumen() {
+    modalResumen.classList.remove('active');
+  }
+
+  function cambiarCantidad(index, nuevaCantidad) {
+    const val = parseInt(nuevaCantidad);
+    if (val >= 1) {
+      carrito[index].cantidad = val;
+      abrirResumen();
+    }
+  }
+
+  function eliminarProducto(index) {
+    carrito.splice(index, 1);
+    abrirResumen();
+  }
+
+  formularioPedido.addEventListener('submit', e => {
+    e.preventDefault();
+    if (carrito.length === 0) return alert("Agrega productos al carrito primero.");
+    const formData = new FormData(formularioPedido);
+    fetch("https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com", {
+      method: "POST",
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(res => res.ok ? res.json() : Promise.reject(res))
+    .then(() => {
+      alert("Pedido enviado correctamente.");
+      carrito = [];
       actualizarContador();
-    }
+      cerrarResumen();
+      productosContainer.innerHTML = '';
+      formularioPedido.reset();
+    })
+    .catch(() => alert("Error al enviar el pedido."));
+  });
+</script>
 
-    function actualizarContador() {
-      const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-      contadorCarrito.textContent = total;
-    }
-
-    function abrirResumen() {
-      let resumen = "Pedido:\n";
-      let total = 0;
-      carrito.forEach(({ nombre, cantidad }) => {
-        const precio = productos[nombre].precio;
-        const subtotal = precio * cantidad;
-        total += subtotal;
-        resumen += `${nombre} x${cantidad} = $${subtotal.toFixed(2)}\n`;
-      });
-      resumen += `\nTotal: $${total.toFixed(2)}`;
-      alert(resumen);
-    }
-
-    function ampliarImagen(url) {
-      imagenAmpliada.src = url;
-      modalImagen.style.display = 'flex';
-    }
-
-    modalImagen.onclick = () => modalImagen.style.display = 'none';
-  </script>
-  <a href="https://wa.me/50374656746?text=Hola%2C%20quiero%20hacer%20un%20pedido" class="btn-flotante wsp" target="_blank"><i class="fab fa-whatsapp"></i></a>
-  <a href="https://www.facebook.com/ay.variedades" class="btn-flotante fb" target="_blank"><i class="fab fa-facebook-f"></i></a>
 </body>
 </html>
