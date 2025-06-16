@@ -79,6 +79,8 @@
       justify-content: center;
       cursor: pointer;
       z-index: 999;
+      color: white;
+      font-size: 24px;
     }
     #carrito-icono:hover {
       background: #fcd000;
@@ -143,9 +145,35 @@
     .pedido-item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 10px;
       border-bottom: 1px solid #444;
       padding-bottom: 5px;
+      gap: 10px;
+    }
+    .pedido-item span.producto-nombre {
+      flex-grow: 1;
+      text-align: left;
+    }
+    .pedido-item input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
+    .pedido-item button {
+      background: #cc0000;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .pedido-item button:hover {
+      background: #aa0000;
     }
   </style>
 </head>
@@ -183,7 +211,7 @@
       <!-- Formulario para enviar pedido -->
       <form id="formulario-pedido">
         <input type="text" name="nombre" placeholder="Tu nombre" required />
-        <input type="email" name="email" placeholder="Tu Numero de contacto" required />
+        <input type="email" name="email" placeholder="Tu Número de contacto" required />
         <textarea name="detalles" readonly></textarea>
         <button type="submit" style="background:#fcd000; color:#000; margin-top:10px;">Enviar Pedido</button>
       </form>
@@ -294,17 +322,45 @@
         listaPedido.innerHTML = '<p>Tu carrito está vacío.</p>';
         textareaDetalles.value = '';
       } else {
-        carrito.forEach(item => {
+        carrito.forEach((item, index) => {
           const div = document.createElement('div');
           div.className = 'pedido-item';
-          div.innerHTML = `<span>${item.producto}</span><span>x${item.cantidad}</span>`;
+
+          div.innerHTML = `
+            <span class="producto-nombre">${item.producto}</span>
+            <input type="number" min="1" value="${item.cantidad}" onchange="cambiarCantidad(${index}, this.value)" />
+            <button onclick="eliminarProducto(${index})">Eliminar</button>
+          `;
           listaPedido.appendChild(div);
         });
-        // Construir texto detalles
-        const detalles = carrito.map(item => `${item.producto} x${item.cantidad}`).join('\n');
-        textareaDetalles.value = detalles;
+        actualizarDetallesPedido();
       }
       modalResumen.classList.add('active');
+    }
+
+    // Función para actualizar el textarea de detalles del pedido
+    function actualizarDetallesPedido() {
+      const detalles = carrito.map(item => `${item.producto} x${item.cantidad}`).join('\n');
+      textareaDetalles.value = detalles;
+      actualizarContador();
+    }
+
+    // Cambiar cantidad de producto en carrito
+    function cambiarCantidad(index, nuevaCantidad) {
+      nuevaCantidad = parseInt(nuevaCantidad);
+      if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
+        alert('Cantidad inválida');
+        abrirResumen(); // refrescar modal para resetear input inválido
+        return;
+      }
+      carrito[index].cantidad = nuevaCantidad;
+      actualizarDetallesPedido();
+    }
+
+    // Eliminar producto del carrito
+    function eliminarProducto(index) {
+      carrito.splice(index, 1);
+      abrirResumen();
     }
 
     // Cerrar modal resumen
