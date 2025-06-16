@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda de Productos Varios</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Tienda de Productos Varios</h1>
+    <nav>
+      <ul>
+        <li><a href="#mosquiteros">Mosquiteros</a></li>
+        <li><a href="#cosmeticos">Cosméticos</a></li>
+        <li><a href="#extensiones">Extensiones</a></li>
+        <li><a href="#babys">Accesorios para Babys</a></li>
+        <li><a href="#escolar">Producto Escolar</a></li>
+        <li><a href="#mochilas">Mochilas</a></li>
+        <li><a href="#peluches">Peluches</a></li>
+        <li><a href="#muebleria">Mueblería</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="mosquiteros">
+      <h2>Mosquiteros</h2>
+      <div class="producto">Mosquitero sencillo</div>
+    </section>
+
+    <section id="cosmeticos">
+      <h2>Cosméticos</h2>
+      <div class="producto">Labial mate</div>
+    </section>
+
+    <section id="extensiones">
+      <h2>Extensiones para Cabello</h2>
+      <div class="producto">Extensión natural 20cm</div>
+    </section>
+
+    <section id="babys">
+      <h2>Accesorios para Babys</h2>
+      <div class="producto">Chupón con cadena</div>
+    </section>
+
+    <section id="escolar">
+      <h2>Producto Escolar</h2>
+      <div class="producto">Cuaderno universitario</div>
+    </section>
+
+    <section id="mochilas">
+      <h2>Mochilas</h2>
+      <div class="producto">Mochila escolar Spiderman</div>
+    </section>
+
+    <section id="peluches">
+      <h2>Peluches</h2>
+      <div class="producto">Osito de peluche</div>
+    </section>
+
+    <section id="muebleria">
+      <h2>Mueblería</h2>
+      <div class="producto">Silla infantil de plástico</div>
+    </section>
+
+    <section id="pedido">
+      <h2>Realizar Pedido</h2>
+      <form id="pedidoForm">
+        <label for="producto">Producto:</label>
+        <input type="text" id="producto" name="producto" required>
+
+        <label for="comentario">Comentario:</label>
+        <textarea id="comentario" name="comentario" rows="4"></textarea>
+
+        <label for="email">Tu correo electrónico:</label>
+        <input type="email" id="email" name="email" required>
+
+        <button type="submit">Enviar Pedido</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="contacto">
+      <a href="https://wa.me/50300000000" target="_blank">WhatsApp</a>
+      <a href="https://facebook.com/tu-pagina" target="_blank">Facebook</a>
+    </div>
+    <p>&copy; 2025 Tienda de Productos Varios</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
