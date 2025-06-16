@@ -1,297 +1,130 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Tienda MANOVOLT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tienda Online - Pedido</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f3f3f3;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: #333;
-      color: #fff;
-      padding: 1em;
-      text-align: center;
-    }
-
-    h1 {
-      margin: 0;
-    }
-
-    .product-container {
+      background: #1a3a4d;
+      color: white;
+      margin: 0; padding: 0;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
     }
-
-    .product {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      width: 200px;
+    h1 {
+      color: #fcd000;
+      margin-bottom: 20px;
     }
-
-    .product h3 {
-      margin: 0 0 10px;
-    }
-
-    .product button {
-      padding: 0.5em 1em;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .product button:hover {
-      background: #0056b3;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-      background: #fff;
-      margin: 5% auto;
+    form {
+      background-color: #0c1e2c;
       padding: 20px;
       border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      position: relative;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(252, 208, 0, 0.7);
     }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    form label {
+    label {
       display: block;
-      margin-top: 10px;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
-
-    form input, form textarea {
+    select, textarea, input[type="email"] {
       width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      box-sizing: border-box;
-    }
-
-    form button {
-      margin-top: 15px;
       padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #fcd000;
+      border: none;
+      padding: 12px;
       width: 100%;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #e0b800;
+    }
+    .success-message {
+      display: none;
       background-color: #28a745;
       color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    #cart-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #ffc107;
-      color: black;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    #cart-items {
-      margin-bottom: 10px;
-    }
-
-    .social-icons i {
-      margin: 0 10px;
-      font-size: 24px;
-      cursor: pointer;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      text-align: center;
     }
   </style>
-
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <header>
-    <h1>Tienda en Línea MANOVOLT</h1>
-  </header>
+  <h1>Realiza tu pedido</h1>
 
-  <div class="product-container" id="product-list">
-    <!-- Aquí se agregan los productos con JS -->
-  </div>
+  <form id="pedido-form" action="https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com" method="POST">
+    <label for="producto">Selecciona el producto:</label>
+    <select name="Producto" id="producto" required>
+      <option value="" disabled selected>-- Elige un producto --</option>
+      <option>Mosquiteros</option>
+      <option>Cosméticos</option>
+      <option>Extensiones para cabello</option>
+      <option>Accesorios para bebés</option>
+      <option>Producto escolar</option>
+      <option>Mochilas</option>
+      <option>Peluches</option>
+      <option>Mueblería</option>
+    </select>
 
-  <button id="cart-button"><i class="fas fa-shopping-cart"></i></button>
+    <label for="comentario">Comentario o especificaciones:</label>
+    <textarea id="comentario" name="Comentario" rows="4" placeholder="Cantidad, color, etc." required></textarea>
 
-  <!-- Modal del carrito -->
-  <div class="modal" id="cart-modal">
-    <div class="modal-content">
-      <button class="close-btn" id="close-cart">&times;</button>
-      <h3>Tu carrito de compras</h3>
-      <div id="cart-items"></div>
-      <form id="order-form" method="POST" action="https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com">
-        <label for="nombre">Nombre completo:</label>
-        <input type="text" id="nombre" name="nombre" required />
-        
-        <label for="telefono">Número de teléfono:</label>
-        <input type="tel" id="telefono" name="telefono" pattern="[0-9]{8}" placeholder="Ej: 74656746" required />
-        
-        <label for="correo">Correo electrónico:</label>
-        <input type="email" id="correo" name="correo" required />
-        
-        <label for="pedido">Detalles del pedido:</label>
-        <textarea id="pedido" name="pedido" rows="5" readonly required></textarea>
-        
-        <button type="submit">Enviar pedido</button>
-      </form>
+    <label for="email">Tu correo electrónico:</label>
+    <input type="email" id="email" name="Email" placeholder="tucorreo@ejemplo.com" required />
 
-      <!-- INICIO MEJORAS -->
-      <div style="margin-top: 20px; text-align: center;">
-        <h4 style="margin-bottom: 10px;">Compartir Pedido</h4>
-        <a id="whatsapp-link" href="#" target="_blank" title="Enviar por WhatsApp">
-          <i class="fab fa-whatsapp" style="color: green;"></i>
-        </a>
-        <a id="facebook-link" href="#" target="_blank" title="Compartir en Facebook">
-          <i class="fab fa-facebook" style="color: #1877f2;"></i>
-        </a>
-        <a id="email-link" href="#" title="Enviar por correo">
-          <i class="fas fa-envelope" style="color: #d44638;"></i>
-        </a>
-      </div>
-      <!-- FIN MEJORAS -->
+    <button type="submit">Enviar pedido</button>
+  </form>
 
-    </div>
+  <div class="success-message" id="success-message">
+    ✅ Pedido enviado con éxito. ¡Gracias por comprar con nosotros!
   </div>
 
   <script>
-    const products = [
-      { id: 1, name: 'Mosquitero', group: 'Mosquiteros' },
-      { id: 2, name: 'Labial rojo', group: 'Cosméticos' },
-      { id: 3, name: 'Extensión cabello natural', group: 'Extensiones para cabello' },
-      { id: 4, name: 'Babero de tela', group: 'Accesorios para bebés' },
-      { id: 5, name: 'Cuaderno universitario', group: 'Productos escolares' },
-      { id: 6, name: 'Mochila escolar grande', group: 'Mochilas' },
-      { id: 7, name: 'Peluchito panda', group: 'Peluches' },
-      { id: 8, name: 'Silla infantil de madera', group: 'Mueblería' },
-    ];
+    const form = document.getElementById('pedido-form');
+    const successMessage = document.getElementById('success-message');
 
-    const productList = document.getElementById('product-list');
-    const cart = [];
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
 
-    products.forEach(product => {
-      const div = document.createElement('div');
-      div.classList.add('product');
-      div.innerHTML = `
-        <h3>${product.name}</h3>
-        <p>${product.group}</p>
-        <button onclick="addToCart(${product.id})">Agregar</button>
-      `;
-      productList.appendChild(div);
-    });
+      const formData = new FormData(form);
 
-    function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      const item = cart.find(p => p.id === id);
-      if (item) {
-        item.quantity += 1;
-      } else {
-        cart.push({ ...product, quantity: 1 });
-      }
-      updateCart();
-    }
-
-    const cartModal = document.getElementById('cart-modal');
-    const cartButton = document.getElementById('cart-button');
-    const closeCart = document.getElementById('close-cart');
-    const cartItems = document.getElementById('cart-items');
-    const pedidoTextarea = document.getElementById('pedido');
-
-    cartButton.onclick = () => {
-      cartModal.style.display = 'block';
-      updateCart();
-    };
-
-    closeCart.onclick = () => {
-      cartModal.style.display = 'none';
-    };
-
-    window.onclick = function(event) {
-      if (event.target === cartModal) {
-        cartModal.style.display = 'none';
-      }
-    };
-
-    function updateCart() {
-      cartItems.innerHTML = '';
-      cart.forEach(item => {
-        const div = document.createElement('div');
-        div.textContent = `${item.name} - Cantidad: ${item.quantity}`;
-        cartItems.appendChild(div);
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          successMessage.style.display = 'block';
+          form.reset();
+        } else {
+          alert('Error al enviar el pedido. Inténtalo de nuevo.');
+        }
+      })
+      .catch(() => {
+        alert('Error al conectar con el servidor. Verifica tu conexión.');
       });
-      updatePedidoTextarea();
-    }
-
-    function updatePedidoTextarea() {
-      if (cart.length === 0) {
-        pedidoTextarea.value = '';
-        return;
-      }
-      let text = 'Pedido:\n';
-      cart.forEach(item => {
-        text += `- ${item.name}: ${item.quantity}\n`;
-      });
-      pedidoTextarea.value = text;
-      updateLinksCompartir(text);
-    }
-
-    function updateLinksCompartir(pedidoTexto) {
-      const nombre = document.getElementById('nombre').value || 'Cliente';
-      const whatsappBase = 'https://wa.me/50374656746?text=';
-      const fbBase = 'https://www.facebook.com/sharer/sharer.php?u=';
-      const emailBase = 'mailto:?subject=Pedido%20MANOVOLT&body=';
-
-      const mensaje = encodeURIComponent(`Hola, soy ${nombre}. Deseo hacer el siguiente pedido:\n${pedidoTexto}`);
-      const emailMensaje = encodeURIComponent(`Hola, soy ${nombre}.\n\nDeseo hacer el siguiente pedido:\n\n${pedidoTexto}`);
-
-      document.getElementById('whatsapp-link').href = whatsappBase + mensaje;
-      document.getElementById('facebook-link').href = fbBase + encodeURIComponent(`https://manovolt.com/pedido?data=${btoa(pedidoTexto)}`);
-      document.getElementById('email-link').href = emailBase + emailMensaje;
-    }
-
-    // Evento para actualizar enlaces al llenar nombre
-    document.getElementById('nombre').addEventListener('input', () => {
-      updatePedidoTextarea();
     });
   </script>
+
 </body>
 </html>
