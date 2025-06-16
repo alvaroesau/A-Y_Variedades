@@ -1,279 +1,491 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tienda Online - Grupos de Productos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a3a4d;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #fcd000;
-      text-align: center;
-    }
-    .grupos {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-    .grupo {
-      background: #0c1e2c;
-      padding: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      min-width: 150px;
-      text-align: center;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .grupo:hover {
-      background-color: #fcd000;
-      color: #000;
-      font-weight: bold;
-    }
-    .productos {
-      max-width: 600px;
-      margin: 0 auto 40px;
-    }
-    .producto {
-      background: #0c1e2c;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    button {
-      background-color: #fcd000;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #e0b800;
-    }
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: #0c1e2c;
-      padding: 25px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 300px;
-      color: white;
-      box-shadow: 0 0 15px #fcd000;
-    }
-    .modal-content input[type="number"] {
-      width: 60px;
-      font-size: 1.2rem;
-      padding: 5px;
-      border-radius: 5px;
-      border: none;
-      margin: 10px 0;
-      text-align: center;
-    }
-    .carrito {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #0c1e2c;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .carrito h3 {
-      color: #fcd000;
-      margin-top: 0;
-    }
-    .carrito-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
-    }
-    .carrito-item span {
-      display: inline-block;
-      min-width: 120px;
-    }
-    .vaciar-btn {
-      background-color: #cc0000;
-      margin-top: 15px;
-      display: block;
-      width: 100%;
-      color: white;
-      font-weight: bold;
-      border-radius: 5px;
-    }
-    .vaciar-btn:hover {
-      background-color: #a30000;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tienda en línea - Productos Varios</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f4f4f4;
+  }
+  header {
+    background-color: #0c1e2c;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+  .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fcd000;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+  h2 {
+    text-align: center;
+    color: #0c1e2c;
+    margin-bottom: 25px;
+  }
+
+  .productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 20px;
+  }
+  .producto {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .producto h3 {
+    margin-top: 0;
+    color: #0c1e2c;
+  }
+  .producto button {
+    margin-top: 15px;
+    background-color: #fcd000;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .producto button:hover {
+    background-color: #e0b800;
+  }
+
+  /* Carrito fijo arriba derecha */
+  #carrito-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #fcd000;
+    border: none;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    font-size: 22px;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #carrito-btn:hover {
+    background-color: #e0b800;
+  }
+  #contador-carrito {
+    position: absolute;
+    top: 5px; right: 5px;
+    background: red;
+    color: white;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+    font-weight: bold;
+  }
+
+  /* Modal Carrito */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal.active {
+    display: flex;
+  }
+  .modal-content {
+    background: white;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    padding: 20px;
+    position: relative;
+  }
+  .modal-content h3 {
+    margin-top: 0;
+    color: #0c1e2c;
+  }
+  .cerrar-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 22px;
+    color: #666;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .cerrar-btn:hover {
+    color: #000;
+  }
+
+  /* Tabla carrito */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  td.cantidad-input {
+    width: 50px;
+  }
+  input[type=number] {
+    width: 45px;
+    padding: 3px;
+  }
+  .eliminar-btn {
+    background: #ff4d4d;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+  }
+  .eliminar-btn:hover {
+    background: #e03e3e;
+  }
+  /* Botón para hacer pedido */
+  #hacer-pedido-btn {
+    margin-top: 20px;
+    background-color: #0c1e2c;
+    color: #fcd000;
+    font-weight: bold;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+  }
+  #hacer-pedido-btn:hover {
+    background-color: #0a1723;
+  }
+
+  /* Modal formulario pedido */
+  form label {
+    display: block;
+    margin: 12px 0 5px 0;
+    font-weight: bold;
+    color: #0c1e2c;
+  }
+  form input, form textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  form textarea {
+    resize: vertical;
+  }
+  form button {
+    margin-top: 15px;
+    background-color: #fcd000;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+  }
+  form button:hover {
+    background-color: #e0b800;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Elige un grupo de productos</h1>
+<header>
+  <div class="logo">⚡ MANOVOLT</div>
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Galería</a>
+    <a href="#">Consejos</a>
+    <a href="#">Contacto</a>
+  </nav>
+</header>
 
-  <div class="grupos" id="grupos-container"></div>
-
-  <div class="productos" id="productos-container"></div>
-
-  <div class="carrito" id="carrito-container" style="display:none;">
-    <h3>Carrito de compras</h3>
-    <div id="carrito-items"></div>
-    <button class="vaciar-btn" id="vaciar-carrito">Vaciar carrito</button>
+<main>
+  <h2>Productos</h2>
+  <div class="productos-grid" id="productos-lista">
+    <!-- Productos se cargarán aquí dinámicamente -->
   </div>
+</main>
 
-  <!-- Modal cantidad -->
-  <div class="modal" id="modal-cantidad">
-    <div class="modal-content">
-      <h3 id="modal-producto-nombre">Producto</h3>
-      <label for="cantidad-input">Cantidad:</label><br/>
-      <input type="number" id="cantidad-input" min="1" value="1" />
-      <br/>
-      <button id="agregar-carrito-btn">Agregar al carrito</button>
-      <button id="cerrar-modal-btn" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
-    </div>
+<!-- Botón carrito fijo -->
+<button id="carrito-btn" title="Ver carrito">
+  <i class="fas fa-shopping-cart"></i>
+  <div id="contador-carrito" style="display:none;">0</div>
+</button>
+
+<!-- Modal carrito -->
+<div class="modal" id="modal-carrito">
+  <div class="modal-content">
+    <span class="cerrar-btn" id="cerrar-carrito">&times;</span>
+    <h3>Tu carrito</h3>
+    <table id="tabla-carrito">
+      <thead>
+        <tr><th>Producto</th><th>Cantidad</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        <!-- Items carrito aquí -->
+      </tbody>
+    </table>
+    <button id="hacer-pedido-btn">Realizar pedido</button>
   </div>
+</div>
 
-  <script>
-    // Datos de grupos y productos
-    const tienda = {
-      "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble", "Mosquitero magnético"],
-      "Cosméticos": ["Labial", "Crema facial", "Base de maquillaje"],
-      "Extensiones para cabello": ["Extensión rizada", "Extensión lisa", "Extensión ondulada"],
-      "Accesorios para bebés": ["Chupete", "Biberón", "Mordedera"],
-      "Producto escolar": ["Cuadernos", "Lápices", "Mochila escolar"],
-      "Mochilas": ["Mochila casual", "Mochila deportiva", "Mochila ejecutiva"],
-      "Peluches": ["Osito", "Conejo", "Perro"],
-      "Mueblería": ["Silla", "Mesa", "Estantería"]
-    };
+<!-- Modal formulario pedido -->
+<div class="modal" id="modal-pedido">
+  <div class="modal-content">
+    <span class="cerrar-btn" id="cerrar-pedido">&times;</span>
+    <h3>Formulario de pedido</h3>
+    <form id="form-pedido">
+      <label for="nombre">Nombre completo:</label>
+      <input type="text" id="nombre" name="nombre" required>
 
-    const gruposContainer = document.getElementById('grupos-container');
-    const productosContainer = document.getElementById('productos-container');
-    const carritoContainer = document.getElementById('carrito-container');
-    const carritoItems = document.getElementById('carrito-items');
-    const modal = document.getElementById('modal-cantidad');
-    const modalProductoNombre = document.getElementById('modal-producto-nombre');
-    const cantidadInput = document.getElementById('cantidad-input');
-    const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
-    const cerrarModalBtn = document.getElementById('cerrar-modal-btn');
-    const vaciarCarritoBtn = document.getElementById('vaciar-carrito');
+      <label for="telefono">Número de teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{8}" placeholder="Ej: 74656746">
 
-    let carrito = [];
-    let productoActual = null;
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" name="correo" required>
 
-    // Cargar grupos
-    Object.keys(tienda).forEach(grupo => {
+      <label for="comentario">Comentario / Dirección:</label>
+      <textarea id="comentario" name="comentario" rows="4"></textarea>
+
+      <button type="submit">Enviar pedido</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Datos de productos
+  const productos = [
+    { id: 1, grupo: "Mosquiteros", nombre: "Mosquitero estándar" },
+    { id: 2, grupo: "Cosméticos", nombre: "Crema hidratante" },
+    { id: 3, grupo: "Extensiones para cabello", nombre: "Extensión rubia" },
+    { id: 4, grupo: "Accesorios para Babys", nombre: "Chupete de silicona" },
+    { id: 5, grupo: "Producto escolar", nombre: "Mochila escolar" },
+    { id: 6, grupo: "Mochilas", nombre: "Mochila deportiva" },
+    { id: 7, grupo: "Peluches", nombre: "Peluchito oso" },
+    { id: 8, grupo: "Mueblería", nombre: "Silla de madera" }
+  ];
+
+  const productosLista = document.getElementById('productos-lista');
+  const carritoBtn = document.getElementById('carrito-btn');
+  const contadorCarrito = document.getElementById('contador-carrito');
+  const modalCarrito = document.getElementById('modal-carrito');
+  const cerrarCarritoBtn = document.getElementById('cerrar-carrito');
+  const tablaCarritoBody = document.querySelector('#tabla-carrito tbody');
+  const modalPedido = document.getElementById('modal-pedido');
+  const cerrarPedidoBtn = document.getElementById('cerrar-pedido');
+  const formPedido = document.getElementById('form-pedido');
+
+  let carrito = [];
+
+  // Mostrar productos en la página
+  function mostrarProductos() {
+    productosLista.innerHTML = "";
+    productos.forEach(producto => {
       const div = document.createElement('div');
-      div.className = 'grupo';
-      div.textContent = grupo;
-      div.addEventListener('click', () => mostrarProductos(grupo));
-      gruposContainer.appendChild(div);
+      div.className = 'producto';
+      div.innerHTML = `
+        <h3>${producto.nombre}</h3>
+        <p><strong>Grupo:</strong> ${producto.grupo}</p>
+        <button data-id="${producto.id}">Pedir</button>
+      `;
+      productosLista.appendChild(div);
     });
+  }
 
-    // Mostrar productos
-    function mostrarProductos(grupo) {
-      productosContainer.innerHTML = `<h2>${grupo}</h2>`;
+  // Actualizar contador carrito y mostrar/ocultar
+  function actualizarContador() {
+    const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+    if (cantidadTotal > 0) {
+      contadorCarrito.style.display = 'flex';
+      contadorCarrito.textContent = cantidadTotal;
+    } else {
+      contadorCarrito.style.display = 'none';
+    }
+  }
 
-      tienda[grupo].forEach(producto => {
-        const prodDiv = document.createElement('div');
-        prodDiv.className = 'producto';
+  // Abrir modal carrito y mostrar contenido
+  function abrirCarrito() {
+    mostrarCarrito();
+    modalCarrito.classList.add('active');
+  }
+  // Cerrar modal carrito
+  function cerrarCarrito() {
+    modalCarrito.classList.remove('active');
+  }
 
-        const nombre = document.createElement('span');
-        nombre.textContent = producto;
+  // Mostrar carrito en tabla
+  function mostrarCarrito() {
+    tablaCarritoBody.innerHTML = "";
+    if (carrito.length === 0) {
+      tablaCarritoBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">El carrito está vacío</td></tr>`;
+      return;
+    }
+    carrito.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.nombre}</td>
+        <td><input type="number" min="1" value="${item.cantidad}" class="cantidad-input" data-id="${item.id}"></td>
+        <td><button class="eliminar-btn" data-id="${item.id}">Eliminar</button></td>
+      `;
+      tablaCarritoBody.appendChild(tr);
+    });
+  }
 
-        const btnPedir = document.createElement('button');
-        btnPedir.textContent = 'Pedir';
-        btnPedir.addEventListener('click', () => abrirModal(producto));
+  // Agregar producto al carrito
+  function agregarAlCarrito(id) {
+    const producto = productos.find(p => p.id === id);
+    if (!producto) return;
 
-        prodDiv.appendChild(nombre);
-        prodDiv.appendChild(btnPedir);
+    const existente = carrito.find(item => item.id === id);
+    if (existente) {
+      existente.cantidad++;
+    } else {
+      carrito.push({ id: producto.id, nombre: producto.nombre, cantidad: 1 });
+    }
+    actualizarContador();
+  }
 
-        productosContainer.appendChild(prodDiv);
-      });
+  // Actualizar cantidad en carrito al cambiar input
+  function cambiarCantidad(id, cantidad) {
+    const item = carrito.find(p => p.id === id);
+    if (!item) return;
+    if (cantidad <= 0) {
+      carrito = carrito.filter(p => p.id !== id);
+    } else {
+      item.cantidad = cantidad;
+    }
+    actualizarContador();
+  }
+
+  // Eliminar producto del carrito
+  function eliminarDelCarrito(id) {
+    carrito = carrito.filter(p => p.id !== id);
+    actualizarContador();
+  }
+
+  // Abrir modal pedido
+  function abrirPedido() {
+    if(carrito.length === 0){
+      alert("El carrito está vacío. Agrega productos para realizar un pedido.");
+      return;
+    }
+    modalCarrito.classList.remove('active');
+    modalPedido.classList.add('active');
+  }
+  // Cerrar modal pedido
+  function cerrarPedido() {
+    modalPedido.classList.remove('active');
+  }
+
+  // Enviar pedido (simulado)
+  function enviarPedido(event) {
+    event.preventDefault();
+
+    const nombre = formPedido.nombre.value.trim();
+    const telefono = formPedido.telefono.value.trim();
+    const correo = formPedido.correo.value.trim();
+    const comentario = formPedido.comentario.value.trim();
+
+    if (!nombre || !telefono || !correo) {
+      alert("Por favor, completa los campos obligatorios.");
+      return;
     }
 
-    // Abrir modal cantidad
-    function abrirModal(producto) {
-      productoActual = producto;
-      modalProductoNombre.textContent = producto;
-      cantidadInput.value = 1;
-      modal.classList.add('active');
-      cantidadInput.focus();
-    }
+    // Aquí puedes agregar la lógica para enviar el pedido a un correo (ej. FormSubmit o backend)
 
-    // Cerrar modal
-    cerrarModalBtn.addEventListener('click', () => {
-      modal.classList.remove('active');
+    // Crear texto con pedido
+    let textoPedido = `Nuevo pedido:\n\nCliente: ${nombre}\nTeléfono: ${telefono}\nCorreo: ${correo}\nComentario: ${comentario}\n\nProductos:\n`;
+    carrito.forEach(item => {
+      textoPedido += `- ${item.nombre} x ${item.cantidad}\n`;
     });
 
-    // Agregar al carrito
-    agregarCarritoBtn.addEventListener('click', () => {
-      const cantidad = parseInt(cantidadInput.value);
-      if (cantidad < 1 || isNaN(cantidad)) {
-        alert('Por favor ingresa una cantidad válida.');
+    // Por ahora solo mostramos alerta y reseteamos
+    alert("Pedido enviado con éxito:\n\n" + textoPedido);
+
+    // Reset carrito y formulario
+    carrito = [];
+    actualizarContador();
+    modalPedido.classList.remove('active');
+    formPedido.reset();
+  }
+
+  // Eventos
+  productosLista.addEventListener('click', e => {
+    if(e.target.tagName === 'BUTTON'){
+      const id = parseInt(e.target.dataset.id);
+      agregarAlCarrito(id);
+    }
+  });
+  carritoBtn.addEventListener('click', abrirCarrito);
+  cerrarCarritoBtn.addEventListener('click', cerrarCarrito);
+
+  tablaCarritoBody.addEventListener('input', e => {
+    if(e.target.classList.contains('cantidad-input')){
+      const id = parseInt(e.target.dataset.id);
+      const cantidad = parseInt(e.target.value);
+      if (isNaN(cantidad) || cantidad < 1) {
+        e.target.value = 1;
         return;
       }
-
-      // Verificar si el producto ya está en el carrito
-      const itemExistente = carrito.find(item => item.producto === productoActual);
-      if (itemExistente) {
-        itemExistente.cantidad += cantidad;
-      } else {
-        carrito.push({ producto: productoActual, cantidad });
-      }
-
-      modal.classList.remove('active');
-      mostrarCarrito();
-    });
-
-    // Mostrar carrito
-    function mostrarCarrito() {
-      if (carrito.length === 0) {
-        carritoContainer.style.display = 'none';
-        carritoItems.innerHTML = '';
-        return;
-      }
-
-      carritoContainer.style.display = 'block';
-      carritoItems.innerHTML = '';
-
-      carrito.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'carrito-item';
-        div.innerHTML = `<span>${item.producto}</span> <span>Cantidad: ${item.cantidad}</span>`;
-        carritoItems.appendChild(div);
-      });
+      cambiarCantidad(id, cantidad);
+      mostrarCarrito(); // refresca la tabla para evitar inconsistencias
     }
+  });
 
-    // Vaciar carrito
-    vaciarCarritoBtn.addEventListener('click', () => {
-      carrito = [];
+  tablaCarritoBody.addEventListener('click', e => {
+    if(e.target.classList.contains('eliminar-btn')){
+      const id = parseInt(e.target.dataset.id);
+      eliminarDelCarrito(id);
       mostrarCarrito();
-    });
+    }
+  });
 
-  </script>
+  document.getElementById('hacer-pedido-btn').addEventListener('click', abrirPedido);
+  cerrarPedidoBtn.addEventListener('click', cerrarPedido);
+
+  formPedido.addEventListener('submit', enviarPedido);
+
+  // Mostrar productos al cargar
+  mostrarProductos();
+  actualizarContador();
+
+</script>
 </body>
 </html>
