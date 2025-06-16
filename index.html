@@ -12,7 +12,7 @@
       margin: 0;
       padding: 20px;
     }
-    h1 {
+    h1, h2 {
       color: #fcd000;
       text-align: center;
     }
@@ -40,7 +40,7 @@
     }
     .productos {
       max-width: 600px;
-      margin: 0 auto;
+      margin: 0 auto 40px;
     }
     .producto {
       background: #0c1e2c;
@@ -63,18 +63,98 @@
     button:hover {
       background-color: #e0b800;
     }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #0c1e2c;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 300px;
+      color: white;
+      box-shadow: 0 0 15px #fcd000;
+    }
+    .modal-content input[type="number"] {
+      width: 60px;
+      font-size: 1.2rem;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .carrito {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #0c1e2c;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .carrito h3 {
+      color: #fcd000;
+      margin-top: 0;
+    }
+    .carrito-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+    .carrito-item span {
+      display: inline-block;
+      min-width: 120px;
+    }
+    .vaciar-btn {
+      background-color: #cc0000;
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .vaciar-btn:hover {
+      background-color: #a30000;
+    }
   </style>
 </head>
 <body>
 
   <h1>Elige un grupo de productos</h1>
 
-  <div class="grupos" id="grupos-container">
-    <!-- Los grupos se cargarán aquí con JS -->
+  <div class="grupos" id="grupos-container"></div>
+
+  <div class="productos" id="productos-container"></div>
+
+  <div class="carrito" id="carrito-container" style="display:none;">
+    <h3>Carrito de compras</h3>
+    <div id="carrito-items"></div>
+    <button class="vaciar-btn" id="vaciar-carrito">Vaciar carrito</button>
   </div>
 
-  <div class="productos" id="productos-container">
-    <!-- Los productos aparecerán aquí al seleccionar un grupo -->
+  <!-- Modal cantidad -->
+  <div class="modal" id="modal-cantidad">
+    <div class="modal-content">
+      <h3 id="modal-producto-nombre">Producto</h3>
+      <label for="cantidad-input">Cantidad:</label><br/>
+      <input type="number" id="cantidad-input" min="1" value="1" />
+      <br/>
+      <button id="agregar-carrito-btn">Agregar al carrito</button>
+      <button id="cerrar-modal-btn" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
+    </div>
   </div>
 
   <script>
@@ -92,8 +172,19 @@
 
     const gruposContainer = document.getElementById('grupos-container');
     const productosContainer = document.getElementById('productos-container');
+    const carritoContainer = document.getElementById('carrito-container');
+    const carritoItems = document.getElementById('carrito-items');
+    const modal = document.getElementById('modal-cantidad');
+    const modalProductoNombre = document.getElementById('modal-producto-nombre');
+    const cantidadInput = document.getElementById('cantidad-input');
+    const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
+    const cerrarModalBtn = document.getElementById('cerrar-modal-btn');
+    const vaciarCarritoBtn = document.getElementById('vaciar-carrito');
 
-    // Cargar grupos al inicio
+    let carrito = [];
+    let productoActual = null;
+
+    // Cargar grupos
     Object.keys(tienda).forEach(grupo => {
       const div = document.createElement('div');
       div.className = 'grupo';
@@ -102,7 +193,7 @@
       gruposContainer.appendChild(div);
     });
 
-    // Mostrar productos del grupo seleccionado
+    // Mostrar productos
     function mostrarProductos(grupo) {
       productosContainer.innerHTML = `<h2>${grupo}</h2>`;
 
@@ -115,10 +206,7 @@
 
         const btnPedir = document.createElement('button');
         btnPedir.textContent = 'Pedir';
-        btnPedir.addEventListener('click', () => {
-          alert(`Elegiste pedir: ${producto}. Aquí abriremos el modal para seleccionar cantidad.`);
-          // Aquí luego abriremos el modal para agregar al carrito
-        });
+        btnPedir.addEventListener('click', () => abrirModal(producto));
 
         prodDiv.appendChild(nombre);
         prodDiv.appendChild(btnPedir);
@@ -126,7 +214,66 @@
         productosContainer.appendChild(prodDiv);
       });
     }
-  </script>
 
+    // Abrir modal cantidad
+    function abrirModal(producto) {
+      productoActual = producto;
+      modalProductoNombre.textContent = producto;
+      cantidadInput.value = 1;
+      modal.classList.add('active');
+      cantidadInput.focus();
+    }
+
+    // Cerrar modal
+    cerrarModalBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // Agregar al carrito
+    agregarCarritoBtn.addEventListener('click', () => {
+      const cantidad = parseInt(cantidadInput.value);
+      if (cantidad < 1 || isNaN(cantidad)) {
+        alert('Por favor ingresa una cantidad válida.');
+        return;
+      }
+
+      // Verificar si el producto ya está en el carrito
+      const itemExistente = carrito.find(item => item.producto === productoActual);
+      if (itemExistente) {
+        itemExistente.cantidad += cantidad;
+      } else {
+        carrito.push({ producto: productoActual, cantidad });
+      }
+
+      modal.classList.remove('active');
+      mostrarCarrito();
+    });
+
+    // Mostrar carrito
+    function mostrarCarrito() {
+      if (carrito.length === 0) {
+        carritoContainer.style.display = 'none';
+        carritoItems.innerHTML = '';
+        return;
+      }
+
+      carritoContainer.style.display = 'block';
+      carritoItems.innerHTML = '';
+
+      carrito.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'carrito-item';
+        div.innerHTML = `<span>${item.producto}</span> <span>Cantidad: ${item.cantidad}</span>`;
+        carritoItems.appendChild(div);
+      });
+    }
+
+    // Vaciar carrito
+    vaciarCarritoBtn.addEventListener('click', () => {
+      carrito = [];
+      mostrarCarrito();
+    });
+
+  </script>
 </body>
 </html>
