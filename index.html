@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tienda Online - Grupos de Productos</title>
   <style>
@@ -176,7 +177,7 @@
       background: #aa0000;
     }
 
-    .btn-flotante {
+.btn-flotante {
   position: fixed;
   bottom: 20px;
   width: 50px;
@@ -189,24 +190,24 @@
   align-items: center;
   text-decoration: none;
   z-index: 9999;
-  box-shadow: 0 0 10px #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+}
+
+.btn-flotante:hover {
+  transform: scale(1.1);
 }
 
 .btn-flotante.wsp {
   right: 20px;
   background: #25d366;
 }
-.btn-flotante.wsp:hover {
-  background: #1ebe57;
-}
 
 .btn-flotante.fb {
   right: 80px;
   background: #1877f2;
 }
-.btn-flotante.fb:hover {
-  background: #0e5dbb;
-}
+
 
   </style>
 </head>
@@ -441,9 +442,14 @@
       });
     });
   </script>
-  <!-- Pega esto justo antes de </body> al final del HTML -->
-<a href="https://wa.me/50374656746?text=Hola%2C%20estoy%20interesado%20en%20sus%20productos" target="_blank" class="btn-flotante wsp">💬</a>
-<a href="https://www.facebook.com/ay.variedades" target="_blank" class="btn-flotante fb">📘</a>
+  <a href="https://wa.me/50374656746?text=Hola%2C%20quiero%20hacer%20un%20pedido" 
+   class="btn-flotante wsp" target="_blank" aria-label="WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
 
+<a href="https://www.facebook.com/ay.variedades" 
+   class="btn-flotante fb" target="_blank" aria-label="Facebook">
+  <i class="fab fa-facebook-f"></i>
+</a>
 </body>
 </html>
