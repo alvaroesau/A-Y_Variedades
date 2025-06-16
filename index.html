@@ -205,15 +205,34 @@
       "Peluches": "https://via.placeholder.com/150?text=Peluches",
       "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
     };
+    const imagenesProductos = {
+      "Mosquitero sencillo": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO2.jpg",
+      "Mosquitero doble": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO3.jpg",
+      "Labial": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/2.jpg",
+      "Base": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/3.jpg",
+      "Labial2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
+      "Extensión rizada": "https://via.placeholder.com/150?text=Extensión",
+      "Chupete": "https://via.placeholder.com/150?text=Chupete",
+      "Cuaderno": "https://via.placeholder.com/150?text=Cuaderno",
+      "Mochila casual": "https://via.placeholder.com/150?text=Mochila",
+      "Osito": "https://via.placeholder.com/150?text=Osito",
+      "frocen": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg"
+      "caty": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M2.jpg"
+      "mesa1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M3.jpg"
+      "mesa2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M4.jpg"
+      "zapatera1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M5.jpg"
+      "zapatera2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M6.jpg"
+      "zapatera3": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
+    };
     const tienda = {
       "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble"],
-      "Cosméticos": ["Labial", "Base"],
+      "Cosméticos": ["Labial", "Base","Labial2"],
       "Extensiones para cabello": ["Extensión rizada"],
       "Accesorios para bebés": ["Chupete"],
       "Producto escolar": ["Cuaderno"],
       "Mochilas": ["Mochila casual"],
       "Peluches": ["Osito"],
-      "Mueblería": ["Silla"]
+      "Mueblería": ["frocen","caty","mesa1","mesa2","zapatera1","zapatera2","zapatera3"]
     };
     const gruposContainer = document.getElementById('grupos-container');
     const productosContainer = document.getElementById('productos-container');
@@ -243,7 +262,14 @@
       tienda[grupo].forEach(producto => {
         const prodDiv = document.createElement('div');
         prodDiv.className = 'producto';
-        prodDiv.innerHTML = `<span>${producto}</span><button onclick="abrirModal('${producto}')">Pedir</button>`;
+        const imgURL = imagenesProductos[producto] || 'https://via.placeholder.com/150?text=Producto';
+        prodDiv.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${imgURL}" alt="${producto}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+            <span>${producto}</span>
+          </div>
+          <button onclick="abrirModal('${producto}')">Pedir</button>
+        `;
         productosContainer.appendChild(prodDiv);
       });
     }
