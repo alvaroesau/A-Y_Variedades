@@ -63,6 +63,7 @@
     button:hover {
       background-color: #e0b800;
     }
+
     #carrito-icono {
       position: fixed;
       top: 20px;
@@ -93,6 +94,7 @@
       padding: 2px 6px;
       border-radius: 50%;
     }
+
     .modal {
       display: none;
       position: fixed;
@@ -116,14 +118,14 @@
       width: 90%;
       box-shadow: 0 0 15px #fcd000;
     }
-    .modal-content input[type="number"] {
-      width: 60px;
-      font-size: 1.2rem;
-      padding: 5px;
+    .modal-content input[type="number"],
+    .modal-content input[type="text"] {
+      width: 80%;
+      font-size: 1rem;
+      padding: 8px;
       border-radius: 5px;
       border: none;
-      margin: 10px 0;
-      text-align: center;
+      margin: 8px 0;
     }
     .pedido-item {
       display: flex;
@@ -132,65 +134,44 @@
       border-bottom: 1px solid #444;
       padding-bottom: 5px;
     }
-    .formulario-pedido {
-      display: flex;
-      flex-direction: column;
-      margin-top: 20px;
-      gap: 10px;
-    }
-    .formulario-pedido input,
-    .formulario-pedido textarea {
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-      font-size: 1rem;
-    }
-    .formulario-pedido textarea {
-      resize: none;
-      height: 120px;
-    }
-    .formulario-pedido button {
-      background-color: #fcd000;
-      color: #000;
-      font-weight: bold;
-      padding: 10px;
-    }
   </style>
 </head>
 <body>
+
   <h1>Elige un grupo de productos</h1>
+
   <div id="carrito-icono" onclick="abrirResumen()">
     🛒
     <span id="contador-carrito">0</span>
   </div>
+
   <div class="grupos" id="grupos-container"></div>
   <div class="productos" id="productos-container"></div>
+
   <div class="modal" id="modal-cantidad">
     <div class="modal-content">
       <h3 id="modal-producto-nombre">Producto</h3>
       <label for="cantidad-input">Cantidad:</label><br/>
-      <input type="number" id="cantidad-input" min="1" value="1" />
-      <br/>
+      <input type="number" id="cantidad-input" min="1" value="1" /><br/>
       <button id="agregar-carrito-btn">Agregar al carrito</button>
       <button onclick="cerrarModal()" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
     </div>
   </div>
+
   <div class="modal" id="modal-resumen">
     <div class="modal-content">
       <h3>Resumen del Pedido</h3>
       <div id="lista-pedido"></div>
-      <form class="formulario-pedido" action="https://formsubmit.co/yoselyn96vasquez@gmail.com" method="POST" onsubmit="return enviarFormulario()">
-        <input type="text" name="nombre" placeholder="Tu nombre" required />
-        <input type="text" name="whatsapp" placeholder="Tu número de WhatsApp" required />
-        <input type="text" name="direccion" placeholder="Tu dirección o zona de entrega" required />
-        <textarea name="pedido" id="detalles-pedido" readonly></textarea>
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_next" value="https://gracias.com/">
+      <form onsubmit="enviarPedidoPorCorreo(event)">
+        <input type="text" id="nombre" placeholder="Tu nombre" required><br>
+        <input type="text" id="direccion" placeholder="Dirección" required><br>
+        <input type="text" id="whatsapp" placeholder="Número de WhatsApp" required><br>
         <button type="submit">Enviar Pedido</button>
       </form>
-      <button onclick="cerrarResumen()" style="margin-top:10px;">Cerrar</button>
+      <button onclick="cerrarResumen()" style="margin-top:10px; background:#666; color:#fff;">Cerrar</button>
     </div>
   </div>
+
   <script>
     const tienda = {
       "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble", "Mosquitero magnético"],
@@ -202,6 +183,7 @@
       "Peluches": ["Osito", "Conejo", "Perro"],
       "Mueblería": ["Silla", "Mesa", "Estantería"]
     };
+
     const gruposContainer = document.getElementById('grupos-container');
     const productosContainer = document.getElementById('productos-container');
     const modal = document.getElementById('modal-cantidad');
@@ -211,9 +193,10 @@
     const contadorCarrito = document.getElementById('contador-carrito');
     const modalResumen = document.getElementById('modal-resumen');
     const listaPedido = document.getElementById('lista-pedido');
-    const detallesPedido = document.getElementById('detalles-pedido');
+
     let carrito = [];
     let productoActual = null;
+
     Object.keys(tienda).forEach(grupo => {
       const div = document.createElement('div');
       div.className = 'grupo';
@@ -221,21 +204,26 @@
       div.addEventListener('click', () => mostrarProductos(grupo));
       gruposContainer.appendChild(div);
     });
+
     function mostrarProductos(grupo) {
       productosContainer.innerHTML = `<h2>${grupo}</h2>`;
       tienda[grupo].forEach(producto => {
         const prodDiv = document.createElement('div');
         prodDiv.className = 'producto';
+
         const nombre = document.createElement('span');
         nombre.textContent = producto;
+
         const btnPedir = document.createElement('button');
         btnPedir.textContent = 'Pedir';
         btnPedir.addEventListener('click', () => abrirModal(producto));
+
         prodDiv.appendChild(nombre);
         prodDiv.appendChild(btnPedir);
         productosContainer.appendChild(prodDiv);
       });
     }
+
     function abrirModal(producto) {
       productoActual = producto;
       modalProductoNombre.textContent = producto;
@@ -243,31 +231,36 @@
       modal.classList.add('active');
       cantidadInput.focus();
     }
+
     function cerrarModal() {
       modal.classList.remove('active');
     }
+
     agregarCarritoBtn.addEventListener('click', () => {
       const cantidad = parseInt(cantidadInput.value);
       if (cantidad < 1 || isNaN(cantidad)) {
         alert('Cantidad no válida.');
         return;
       }
+
       const existente = carrito.find(item => item.producto === productoActual);
       if (existente) {
         existente.cantidad += cantidad;
       } else {
         carrito.push({ producto: productoActual, cantidad });
       }
+
       cerrarModal();
       actualizarContador();
     });
+
     function actualizarContador() {
       const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
       contadorCarrito.textContent = total;
     }
+
     function abrirResumen() {
       listaPedido.innerHTML = '';
-      let detalles = '';
       if (carrito.length === 0) {
         listaPedido.innerHTML = '<p>Tu carrito está vacío.</p>';
       } else {
@@ -276,23 +269,52 @@
           div.className = 'pedido-item';
           div.innerHTML = `<span>${item.producto}</span><span>x${item.cantidad}</span>`;
           listaPedido.appendChild(div);
-          detalles += `${item.producto} x${item.cantidad}\n`;
         });
       }
-      detallesPedido.value = detalles;
       modalResumen.classList.add('active');
     }
+
     function cerrarResumen() {
       modalResumen.classList.remove('active');
     }
-    function enviarFormulario() {
+
+    function enviarPedidoPorCorreo(event) {
+      event.preventDefault();
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+
+      if (!nombre || !direccion || !whatsapp) {
+        alert('Por favor completa todos los campos.');
+        return;
+      }
+
+      if (carrito.length === 0) {
+        alert('Tu carrito está vacío.');
+        return;
+      }
+
+      let cuerpo = `Pedido de ${nombre}%0A`;
+      cuerpo += `Dirección: ${direccion}%0A`;
+      cuerpo += `WhatsApp: ${whatsapp}%0A%0AProductos:%0A`;
+
+      carrito.forEach(item => {
+        cuerpo += `- ${item.producto} x${item.cantidad}%0A`;
+      });
+
+      const mailto = `mailto:yoselyn96vasquez@gmail.com?subject=Nuevo Pedido de ${encodeURIComponent(nombre)}&body=${encodeURIComponent(cuerpo)}`;
+
+      window.location.href = mailto;
+
       setTimeout(() => {
-        modalResumen.classList.remove('active');
-        carrito = [];
-        actualizarContador();
-        alert('¡Pedido enviado correctamente!');
+        if (confirm("✅ Tu pedido ha sido preparado para enviar.\nPresiona OK para volver al inicio.")) {
+          cerrarResumen();
+          carrito = [];
+          actualizarContador();
+          productosContainer.innerHTML = "";
+        }
       }, 500);
-      return true;
     }
   </script>
 </body>
