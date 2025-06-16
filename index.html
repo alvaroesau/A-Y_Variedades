@@ -63,7 +63,40 @@
     button:hover {
       background-color: #e0b800;
     }
-    /* Modal */
+
+    /* Icono carrito */
+    #carrito-icono {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #0c1e2c;
+      border: 2px solid #fcd000;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 999;
+    }
+    #carrito-icono:hover {
+      background: #fcd000;
+      color: #0c1e2c;
+    }
+    #carrito-icono span {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
+
+    /* Modal general */
     .modal {
       display: none;
       position: fixed;
@@ -82,65 +115,28 @@
       padding: 25px;
       border-radius: 10px;
       text-align: center;
-      max-width: 300px;
       color: white;
+      max-width: 400px;
+      width: 90%;
       box-shadow: 0 0 15px #fcd000;
     }
-    .modal-content input[type="number"],
-    .modal-content input[type="text"] {
-      width: 90%;
-      font-size: 1rem;
+
+    .modal-content input[type="number"] {
+      width: 60px;
+      font-size: 1.2rem;
       padding: 5px;
       border-radius: 5px;
       border: none;
-      margin: 5px 0;
+      margin: 10px 0;
       text-align: center;
     }
-    .carrito {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #0c1e2c;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .carrito h3 {
-      color: #fcd000;
-      margin-top: 0;
-    }
-    .carrito-item {
+
+    .pedido-item {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       border-bottom: 1px solid #444;
       padding-bottom: 5px;
-    }
-    .carrito-item span {
-      display: inline-block;
-      min-width: 120px;
-    }
-    .vaciar-btn {
-      background-color: #cc0000;
-      margin-top: 15px;
-      display: block;
-      width: 100%;
-      color: white;
-      font-weight: bold;
-      border-radius: 5px;
-    }
-    .vaciar-btn:hover {
-      background-color: #a30000;
-    }
-    .carrito-icon {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background: #fcd000;
-      color: black;
-      padding: 10px;
-      border-radius: 50%;
-      font-size: 1.5em;
-      cursor: pointer;
-      z-index: 1100;
     }
   </style>
 </head>
@@ -148,14 +144,14 @@
 
   <h1>Elige un grupo de productos</h1>
 
-  <div class="carrito-icon" id="icono-carrito">🛒</div>
+  <!-- Icono carrito -->
+  <div id="carrito-icono" onclick="abrirResumen()">
+    🛒
+    <span id="contador-carrito">0</span>
+  </div>
+
   <div class="grupos" id="grupos-container"></div>
   <div class="productos" id="productos-container"></div>
-  <div class="carrito" id="carrito-container" style="display:none;">
-    <h3>Carrito de compras</h3>
-    <div id="carrito-items"></div>
-    <button class="vaciar-btn" id="vaciar-carrito">Vaciar carrito</button>
-  </div>
 
   <!-- Modal cantidad -->
   <div class="modal" id="modal-cantidad">
@@ -165,7 +161,16 @@
       <input type="number" id="cantidad-input" min="1" value="1" />
       <br/>
       <button id="agregar-carrito-btn">Agregar al carrito</button>
-      <button id="cerrar-modal-btn" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
+      <button onclick="cerrarModal()" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal resumen de carrito -->
+  <div class="modal" id="modal-resumen">
+    <div class="modal-content">
+      <h3>Resumen del Pedido</h3>
+      <div id="lista-pedido"></div>
+      <button onclick="cerrarResumen()" style="margin-top:10px;">Cerrar</button>
     </div>
   </div>
 
@@ -183,15 +188,13 @@
 
     const gruposContainer = document.getElementById('grupos-container');
     const productosContainer = document.getElementById('productos-container');
-    const carritoContainer = document.getElementById('carrito-container');
-    const carritoItems = document.getElementById('carrito-items');
     const modal = document.getElementById('modal-cantidad');
     const modalProductoNombre = document.getElementById('modal-producto-nombre');
     const cantidadInput = document.getElementById('cantidad-input');
     const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
-    const cerrarModalBtn = document.getElementById('cerrar-modal-btn');
-    const vaciarCarritoBtn = document.getElementById('vaciar-carrito');
-    const iconoCarrito = document.getElementById('icono-carrito');
+    const contadorCarrito = document.getElementById('contador-carrito');
+    const modalResumen = document.getElementById('modal-resumen');
+    const listaPedido = document.getElementById('lista-pedido');
 
     let carrito = [];
     let productoActual = null;
@@ -209,11 +212,14 @@
       tienda[grupo].forEach(producto => {
         const prodDiv = document.createElement('div');
         prodDiv.className = 'producto';
+
         const nombre = document.createElement('span');
         nombre.textContent = producto;
+
         const btnPedir = document.createElement('button');
         btnPedir.textContent = 'Pedir';
         btnPedir.addEventListener('click', () => abrirModal(producto));
+
         prodDiv.appendChild(nombre);
         prodDiv.appendChild(btnPedir);
         productosContainer.appendChild(prodDiv);
@@ -228,50 +234,51 @@
       cantidadInput.focus();
     }
 
-    cerrarModalBtn.addEventListener('click', () => {
+    function cerrarModal() {
       modal.classList.remove('active');
-    });
+    }
 
     agregarCarritoBtn.addEventListener('click', () => {
       const cantidad = parseInt(cantidadInput.value);
       if (cantidad < 1 || isNaN(cantidad)) {
-        alert('Por favor ingresa una cantidad válida.');
+        alert('Cantidad no válida.');
         return;
       }
-      const itemExistente = carrito.find(item => item.producto === productoActual);
-      if (itemExistente) {
-        itemExistente.cantidad += cantidad;
+
+      const existente = carrito.find(item => item.producto === productoActual);
+      if (existente) {
+        existente.cantidad += cantidad;
       } else {
         carrito.push({ producto: productoActual, cantidad });
       }
-      modal.classList.remove('active');
-      mostrarCarrito();
+
+      cerrarModal();
+      actualizarContador();
     });
 
-    function mostrarCarrito() {
-      if (carrito.length === 0) {
-        carritoContainer.style.display = 'none';
-        carritoItems.innerHTML = '';
-        return;
-      }
-      carritoContainer.style.display = 'block';
-      carritoItems.innerHTML = '';
-      carrito.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'carrito-item';
-        div.innerHTML = `<span>${item.producto}</span> <span>Cantidad: ${item.cantidad}</span>`;
-        carritoItems.appendChild(div);
-      });
+    function actualizarContador() {
+      const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+      contadorCarrito.textContent = total;
     }
 
-    vaciarCarritoBtn.addEventListener('click', () => {
-      carrito = [];
-      mostrarCarrito();
-    });
+    function abrirResumen() {
+      listaPedido.innerHTML = '';
+      if (carrito.length === 0) {
+        listaPedido.innerHTML = '<p>Tu carrito está vacío.</p>';
+      } else {
+        carrito.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'pedido-item';
+          div.innerHTML = `<span>${item.producto}</span><span>x${item.cantidad}</span>`;
+          listaPedido.appendChild(div);
+        });
+      }
+      modalResumen.classList.add('active');
+    }
 
-    iconoCarrito.addEventListener('click', () => {
-      carritoContainer.scrollIntoView({ behavior: 'smooth' });
-    });
+    function cerrarResumen() {
+      modalResumen.classList.remove('active');
+    }
   </script>
 </body>
 </html>
