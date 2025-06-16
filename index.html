@@ -1,130 +1,439 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tienda Online - Pedido</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a3a4d;
-      color: white;
-      margin: 0; padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #fcd000;
-      margin-bottom: 20px;
-    }
-    form {
-      background-color: #0c1e2c;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 0 10px rgba(252, 208, 0, 0.7);
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    select, textarea, input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      border: none;
-    }
-    button {
-      background-color: #fcd000;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #000;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #e0b800;
-    }
-    .success-message {
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tienda en Línea - MANOVOLT</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0c1e2c, #1a3a4d);
+    color: white;
+    margin: 0; padding: 0;
+  }
+  header {
+    background-color: #0c1e2c;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fcd000;
+  }
+  nav {
+    display: flex;
+    gap: 15px;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  nav a:hover {
+    background-color: #fcd000;
+    color: #000;
+  }
+  .menu-toggle {
+    display: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+  }
+  .products {
+    max-width: 800px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+    gap: 15px;
+  }
+  .product-card {
+    background: #1a3a4d;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .product-card button {
+    margin-top: 10px;
+    background-color: #fcd000;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .product-card button:hover {
+    background-color: #e0b800;
+  }
+  #cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fcd000;
+    color: #000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1001;
+  }
+  #cart-count {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background: red;
+    color: white;
+    font-size: 14px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+  }
+  /* Modal Carrito */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  .modal-content h3 {
+    margin-top: 0;
+  }
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: #fcd000;
+    border: none;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .close-btn:hover {
+    background: #e0b800;
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cart-item span {
+    font-weight: bold;
+  }
+  form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  form input, form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  form button {
+    margin-top: 15px;
+    background-color: #fcd000;
+    color: #000;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+  }
+  form button:hover {
+    background-color: #e0b800;
+  }
+  /* Modal Confirmación */
+  #modal-confirm {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+  }
+  #modal-confirm .modal-content {
+    max-width: 400px;
+    text-align: center;
+  }
+  #modal-confirm .modal-content button {
+    width: auto;
+  }
+  @media (max-width: 768px) {
+    nav {
       display: none;
-      background-color: #28a745;
-      color: white;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 10px;
+      flex-direction: column;
+      background-color: #0c1e2c;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      width: 100%;
+      padding: 20px 0;
       text-align: center;
     }
-  </style>
+    nav.active {
+      display: flex;
+    }
+    .menu-toggle {
+      display: block;
+    }
+  }
+</style>
 </head>
 <body>
 
-  <h1>Realiza tu pedido</h1>
-
-  <form id="pedido-form" action="https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com" method="POST">
-    <label for="producto">Selecciona el producto:</label>
-    <select name="Producto" id="producto" required>
-      <option value="" disabled selected>-- Elige un producto --</option>
-      <option>Mosquiteros</option>
-      <option>Cosméticos</option>
-      <option>Extensiones para cabello</option>
-      <option>Accesorios para bebés</option>
-      <option>Producto escolar</option>
-      <option>Mochilas</option>
-      <option>Peluches</option>
-      <option>Mueblería</option>
-    </select>
-
-    <label for="comentario">Comentario o especificaciones:</label>
-    <textarea id="comentario" name="Comentario" rows="4" placeholder="Cantidad, color, etc." required></textarea>
-
-    <label for="email">Tu correo electrónico:</label>
-    <input type="email" id="email" name="Email" placeholder="tucorreo@ejemplo.com" required />
-
-    <button type="submit">Enviar pedido</button>
-  </form>
-
-  <div class="success-message" id="success-message">
-    ✅ Pedido enviado con éxito. ¡Gracias por comprar con nosotros!
+<header>
+  <div class="logo">⚡<span>MANOVOLT</span></div>
+  <div class="menu-toggle" id="menu-toggle">
+    <i class="fas fa-bars"></i>
   </div>
+  <nav id="nav-links">
+    <a href="#">Inicio</a>
+    <a href="#">Categorías</a>
+    <a href="#">Contacto</a>
+  </nav>
+</header>
 
-  <script>
-    const form = document.getElementById('pedido-form');
-    const successMessage = document.getElementById('success-message');
+<section class="products" id="products-list">
+  <!-- Productos se cargarán aquí -->
+</section>
 
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
+<!-- Ícono carrito -->
+<div id="cart-icon" title="Ver carrito">
+  <i class="fas fa-shopping-cart"></i>
+  <div id="cart-count">0</div>
+</div>
 
-      const formData = new FormData(form);
+<!-- Modal carrito -->
+<div class="modal" id="cart-modal">
+  <div class="modal-content">
+    <button class="close-btn" id="close-cart">&times;</button>
+    <h3>Tu carrito de compras</h3>
+    <div id="cart-items"></div>
+    <form id="order-form" method="POST" action="https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com">
+      <label for="nombre">Nombre completo:</label>
+      <input type="text" id="nombre" name="nombre" required />
+      
+      <label for="telefono">Número de teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" pattern="[0-9]{8}" placeholder="Ej: 74656746" required />
+      
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" name="correo" required />
+      
+      <label for="pedido">Detalles del pedido:</label>
+      <textarea id="pedido" name="pedido" rows="5" readonly required></textarea>
+      
+      <button type="submit">Enviar pedido</button>
+    </form>
+  </div>
+</div>
 
-      fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(response => {
-        if (response.ok) {
-          successMessage.style.display = 'block';
-          form.reset();
-        } else {
-          alert('Error al enviar el pedido. Inténtalo de nuevo.');
-        }
-      })
-      .catch(() => {
-        alert('Error al conectar con el servidor. Verifica tu conexión.');
-      });
+<!-- Modal confirmación -->
+<div class="modal" id="modal-confirm">
+  <div class="modal-content">
+    <h3>✅ Tu pedido ha sido enviado con éxito</h3>
+    <p>Gracias por tu compra. Te contactaremos pronto.</p>
+    <button onclick="location.reload()">OK</button>
+  </div>
+</div>
+
+<script>
+  // Productos
+  const products = [
+    { id: 1, name: 'Mosquiteros' },
+    { id: 2, name: 'Cosméticos' },
+    { id: 3, name: 'Extensiones para cabello' },
+    { id: 4, name: 'Accesorios para Babys' },
+    { id: 5, name: 'Producto escolar' },
+    { id: 6, name: 'Mochilas' },
+    { id: 7, name: 'Peluches' },
+    { id: 8, name: 'Mueblería' },
+  ];
+
+  const productsList = document.getElementById('products-list');
+  const cartIcon = document.getElementById('cart-icon');
+  const cartCount = document.getElementById('cart-count');
+  const cartModal = document.getElementById('cart-modal');
+  const closeCartBtn = document.getElementById('close-cart');
+  const cartItemsDiv = document.getElementById('cart-items');
+  const orderForm = document.getElementById('order-form');
+  const pedidoTextarea = document.getElementById('pedido');
+  const modalConfirm = document.getElementById('modal-confirm');
+
+  let cart = [];
+
+  // Cargar productos
+  function loadProducts() {
+    productsList.innerHTML = '';
+    products.forEach(product => {
+      const div = document.createElement('div');
+      div.className = 'product-card';
+      div.innerHTML = `
+        <div>${product.name}</div>
+        <button onclick="addToCart(${product.id})">Pedir</button>
+      `;
+      productsList.appendChild(div);
     });
-  </script>
+  }
+
+  // Agregar al carrito
+  function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      cart.push({...product, quantity: 1});
+    }
+    updateCartCount();
+  }
+
+  // Actualizar contador carrito
+  function updateCartCount() {
+    const total = cart.reduce((acc, item) => acc + item.quantity, 0);
+    cartCount.textContent = total;
+  }
+
+  // Mostrar modal carrito
+  cartIcon.addEventListener('click', () => {
+    renderCartItems();
+    updatePedidoTextarea();
+    cartModal.style.display = 'flex';
+  });
+
+  // Cerrar modal carrito
+  closeCartBtn.addEventListener('click', () => {
+    cartModal.style.display = 'none';
+  });
+
+  // Renderizar items en carrito
+  function renderCartItems() {
+    if (cart.length === 0) {
+      cartItemsDiv.innerHTML = '<p>El carrito está vacío.</p>';
+      pedidoTextarea.value = '';
+      return;
+    }
+    cartItemsDiv.innerHTML = '';
+    cart.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <span>${item.name} x ${item.quantity}</span>
+        <button onclick="removeFromCart(${item.id})">Eliminar</button>
+      `;
+      cartItemsDiv.appendChild(div);
+    });
+  }
+
+  // Eliminar item del carrito
+  function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    renderCartItems();
+    updateCartCount();
+    updatePedidoTextarea();
+  }
+
+  // Actualizar textarea con detalles del pedido
+  function updatePedidoTextarea() {
+    if (cart.length === 0) {
+      pedidoTextarea.value = '';
+      return;
+    }
+    let text = 'Pedido:\n';
+    cart.forEach(item => {
+      text += `- ${item.name}: ${item.quantity}\n`;
+    });
+    pedidoTextarea.value = text;
+  }
+
+  // Manejar envío del formulario con AJAX a FormSubmit
+  orderForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // Validar que carrito no esté vacío
+    if(cart.length === 0){
+      alert('Tu carrito está vacío. Agrega productos antes de enviar el pedido.');
+      return;
+    }
+
+    const formData = new FormData(orderForm);
+
+    fetch(orderForm.action, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json'
+      },
+      body: formData
+    })
+    .then(response => {
+      if(response.ok){
+        cartModal.style.display = 'none';
+        modalConfirm.style.display = 'flex';
+        cart = [];
+        updateCartCount();
+        orderForm.reset();
+      } else {
+        alert('Error al enviar el pedido.');
+      }
+    })
+    .catch(() => alert('Error al conectar con el servidor.'));
+  });
+
+  // Menú hamburguesa
+  const toggle = document.getElementById('menu-toggle');
+  const nav = document.getElementById('nav-links');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('active');
+  });
+
+  // Cierra el menú al hacer clic en un enlace (móvil)
+  const links = document.querySelectorAll('#nav-links a');
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('active');
+    });
+  });
+
+  // Cargar productos al inicio
+  loadProducts();
+</script>
 
 </body>
 </html>
