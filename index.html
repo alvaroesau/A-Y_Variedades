@@ -162,6 +162,25 @@
     .btn-flotante:hover { transform: scale(1.1); }
     .btn-flotante.wsp { right: 20px; background: #25d366; }
     .btn-flotante.fb { right: 80px; background: #1877f2; }
+
+    /* MODAL imagen ampliada */
+    #modal-imagen {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    #modal-imagen img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #fcd000;
+    }
   </style>
 </head>
 <body>
@@ -192,17 +211,21 @@
       <button onclick="cerrarResumen()">Cerrar</button>
     </div>
   </div>
+  <!-- Modal para imagen ampliada -->
+  <div id="modal-imagen" onclick="cerrarImagenAmpliada()">
+    <img id="imagen-ampliada" src="" alt="Vista ampliada" />
+  </div>
 
   <!-- Scripts -->
   <script>
     const imagenesGrupos = {
       "Mosquiteros": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/MO1.jpg",
       "Cosméticos": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
-      "Extensiones para cabello": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/extensiones.jpg",
-      "Accesorios para bebés": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/bebes.jpg",
-      "Productos escolares": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/escolar.jpg",
-      "Mochilas": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/mochilas.jpg",
-      "Peluches": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/peluches.jpg",
+      "Extensiones para cabello": "https://via.placeholder.com/150?text=Extensione",
+      "Accesorios para bebés": "https://via.placeholder.com/150?text=Bebés",
+      "Producto escolar": "https://via.placeholder.com/150?text=Escolar",
+      "Mochilas": "https://via.placeholder.com/150?text=Mochilas",
+      "Peluches": "https://via.placeholder.com/150?text=Peluches",
       "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
     };
 
@@ -212,11 +235,11 @@
       "Labial": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/2.jpg",
       "Base": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/3.jpg",
       "Labial2": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/1.jpg",
-      "Extensión rizada": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/extensiones.jpg",
-      "Chupete": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/bebes.jpg",
-      "Cuaderno": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/escolar.jpg",
-      "Mochila casual": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/mochilas.jpg",
-      "Osito": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/peluches.jpg",
+      "Extensión rizada": "https://via.placeholder.com/150?text=Extensión",
+      "Chupete": "https://via.placeholder.com/150?text=Chupete",
+      "Cuaderno": "https://via.placeholder.com/150?text=Cuaderno",
+      "Mochila casual": "https://via.placeholder.com/150?text=Mochila",
+      "Osito": "https://via.placeholder.com/150?text=Osito",
       "frocen": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg",
       "caty": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M2.jpg",
       "mesa1": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M3.jpg",
@@ -231,7 +254,7 @@
       "Cosméticos": ["Labial", "Base","Labial2"],
       "Extensiones para cabello": ["Extensión rizada"],
       "Accesorios para bebés": ["Chupete"],
-      "Productos escolares": ["Cuaderno"],
+      "Producto escolar": ["Cuaderno"],
       "Mochilas": ["Mochila casual"],
       "Peluches": ["Osito"],
       "Mueblería": ["frocen","caty","mesa1","mesa2","zapatera1","zapatera2","zapatera3"]
@@ -248,6 +271,8 @@
     const listaPedido = document.getElementById('lista-pedido');
     const formularioPedido = document.getElementById('formulario-pedido');
     const textareaDetalles = formularioPedido.querySelector('textarea');
+    const modalImagen = document.getElementById('modal-imagen');
+    const imagenAmpliada = document.getElementById('imagen-ampliada');
 
     let carrito = [];
     let productoActual = null;
@@ -268,13 +293,22 @@
         const imgURL = imagenesProductos[producto] || 'https://via.placeholder.com/150?text=Producto';
         prodDiv.innerHTML = `
           <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="${imgURL}" alt="${producto}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+            <img src="${imgURL}" alt="${producto}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; cursor: pointer;" onclick="verImagen('${imgURL}')" />
             <span>${producto}</span>
           </div>
           <button onclick="abrirModal('${producto}')">Pedir</button>
         `;
         productosContainer.appendChild(prodDiv);
       });
+    }
+
+    function verImagen(url) {
+      imagenAmpliada.src = url;
+      modalImagen.style.display = 'flex';
+    }
+
+    function cerrarImagenAmpliada() {
+      modalImagen.style.display = 'none';
     }
 
     function abrirModal(producto) {
