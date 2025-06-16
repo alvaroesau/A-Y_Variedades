@@ -1,277 +1,100 @@
-<!DOCTYPE html>
-<html lang="es">
+<!-- Asegúrate de que el HEAD tenga esto en algún lugar -->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tienda Online - Grupos de Productos</title>
+  <title>Tienda Online</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a3a4d;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #fcd000;
-      text-align: center;
-    }
-    .grupos {
+    /* … todos tus estilos anteriores aquí … */
+    /* (No los repito para ahorrar espacio, pero mantenlos todos) */
+
+    .formulario-pedido {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
+      flex-direction: column;
+      margin-top: 20px;
+      gap: 10px;
     }
-    .grupo {
-      background: #0c1e2c;
-      padding: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      min-width: 150px;
-      text-align: center;
-      transition: background-color 0.3s;
-      user-select: none;
+
+    .formulario-pedido input,
+    .formulario-pedido textarea {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
     }
-    .grupo:hover {
+
+    .formulario-pedido textarea {
+      resize: none;
+      height: 120px;
+    }
+
+    .formulario-pedido button {
       background-color: #fcd000;
       color: #000;
       font-weight: bold;
-    }
-    .productos {
-      max-width: 600px;
-      margin: 0 auto 40px;
-    }
-    .producto {
-      background: #0c1e2c;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    button {
-      background-color: #fcd000;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #e0b800;
+      padding: 10px;
     }
 
-    /* Icono carrito */
-    #carrito-icono {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #0c1e2c;
-      border: 2px solid #fcd000;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 999;
-    }
-    #carrito-icono:hover {
-      background: #fcd000;
-      color: #0c1e2c;
-    }
-    #carrito-icono span {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 50%;
-    }
-
-    /* Modal general */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: #0c1e2c;
-      padding: 25px;
-      border-radius: 10px;
+    .confirmacion {
       text-align: center;
-      color: white;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 0 15px #fcd000;
-    }
-
-    .modal-content input[type="number"] {
-      width: 60px;
-      font-size: 1.2rem;
-      padding: 5px;
-      border-radius: 5px;
-      border: none;
-      margin: 10px 0;
-      text-align: center;
-    }
-
-    .pedido-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
+      padding: 20px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
 
-  <h1>Elige un grupo de productos</h1>
+  <!-- TODO lo demás sigue igual hasta aquí -->
 
-  <!-- Icono carrito -->
-  <div id="carrito-icono" onclick="abrirResumen()">
-    🛒
-    <span id="contador-carrito">0</span>
-  </div>
-
-  <div class="grupos" id="grupos-container"></div>
-  <div class="productos" id="productos-container"></div>
-
-  <!-- Modal cantidad -->
-  <div class="modal" id="modal-cantidad">
-    <div class="modal-content">
-      <h3 id="modal-producto-nombre">Producto</h3>
-      <label for="cantidad-input">Cantidad:</label><br/>
-      <input type="number" id="cantidad-input" min="1" value="1" />
-      <br/>
-      <button id="agregar-carrito-btn">Agregar al carrito</button>
-      <button onclick="cerrarModal()" style="margin-top:10px; background:#666; color:#fff;">Cancelar</button>
-    </div>
-  </div>
-
-  <!-- Modal resumen de carrito -->
+  <!-- Modal resumen de carrito con formulario -->
   <div class="modal" id="modal-resumen">
-    <div class="modal-content">
+    <div class="modal-content" id="resumen-content">
       <h3>Resumen del Pedido</h3>
       <div id="lista-pedido"></div>
+
+      <form class="formulario-pedido" id="formulario" action="https://formsubmit.co/yoselyn96vasquez@gmail.com" method="POST" onsubmit="return enviarFormulario()">
+        <input type="text" name="nombre" placeholder="Tu nombre" required />
+        <input type="text" name="whatsapp" placeholder="Tu número de WhatsApp" required />
+        <input type="text" name="direccion" placeholder="Tu dirección o zona de entrega" required />
+
+        <textarea name="pedido" id="detalles-pedido" readonly></textarea>
+
+        <!-- Config FormSubmit -->
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://gracias.com/">
+
+        <button type="submit">Enviar Pedido</button>
+      </form>
+
       <button onclick="cerrarResumen()" style="margin-top:10px;">Cerrar</button>
     </div>
   </div>
 
+  <!-- Modal de confirmación -->
+  <div class="modal" id="modal-confirmacion">
+    <div class="modal-content confirmacion">
+      <h3>¡Gracias por tu pedido!</h3>
+      <p>Tu orden ha sido enviada con éxito. Pronto nos pondremos en contacto contigo.</p>
+      <button onclick="cerrarConfirmacion()">Aceptar</button>
+    </div>
+  </div>
+
   <script>
-    const tienda = {
-      "Mosquiteros": ["Mosquitero sencillo", "Mosquitero doble", "Mosquitero magnético"],
-      "Cosméticos": ["Labial", "Crema facial", "Base de maquillaje"],
-      "Extensiones para cabello": ["Extensión rizada", "Extensión lisa", "Extensión ondulada"],
-      "Accesorios para bebés": ["Chupete", "Biberón", "Mordedera"],
-      "Producto escolar": ["Cuadernos", "Lápices", "Mochila escolar"],
-      "Mochilas": ["Mochila casual", "Mochila deportiva", "Mochila ejecutiva"],
-      "Peluches": ["Osito", "Conejo", "Perro"],
-      "Mueblería": ["Silla", "Mesa", "Estantería"]
-    };
-
-    const gruposContainer = document.getElementById('grupos-container');
-    const productosContainer = document.getElementById('productos-container');
-    const modal = document.getElementById('modal-cantidad');
-    const modalProductoNombre = document.getElementById('modal-producto-nombre');
-    const cantidadInput = document.getElementById('cantidad-input');
-    const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
-    const contadorCarrito = document.getElementById('contador-carrito');
-    const modalResumen = document.getElementById('modal-resumen');
-    const listaPedido = document.getElementById('lista-pedido');
-
-    let carrito = [];
-    let productoActual = null;
-
-    Object.keys(tienda).forEach(grupo => {
-      const div = document.createElement('div');
-      div.className = 'grupo';
-      div.textContent = grupo;
-      div.addEventListener('click', () => mostrarProductos(grupo));
-      gruposContainer.appendChild(div);
-    });
-
-    function mostrarProductos(grupo) {
-      productosContainer.innerHTML = `<h2>${grupo}</h2>`;
-      tienda[grupo].forEach(producto => {
-        const prodDiv = document.createElement('div');
-        prodDiv.className = 'producto';
-
-        const nombre = document.createElement('span');
-        nombre.textContent = producto;
-
-        const btnPedir = document.createElement('button');
-        btnPedir.textContent = 'Pedir';
-        btnPedir.addEventListener('click', () => abrirModal(producto));
-
-        prodDiv.appendChild(nombre);
-        prodDiv.appendChild(btnPedir);
-        productosContainer.appendChild(prodDiv);
-      });
-    }
-
-    function abrirModal(producto) {
-      productoActual = producto;
-      modalProductoNombre.textContent = producto;
-      cantidadInput.value = 1;
-      modal.classList.add('active');
-      cantidadInput.focus();
-    }
-
-    function cerrarModal() {
-      modal.classList.remove('active');
-    }
-
-    agregarCarritoBtn.addEventListener('click', () => {
-      const cantidad = parseInt(cantidadInput.value);
-      if (cantidad < 1 || isNaN(cantidad)) {
-        alert('Cantidad no válida.');
-        return;
-      }
-
-      const existente = carrito.find(item => item.producto === productoActual);
-      if (existente) {
-        existente.cantidad += cantidad;
-      } else {
-        carrito.push({ producto: productoActual, cantidad });
-      }
-
-      cerrarModal();
-      actualizarContador();
-    });
-
-    function actualizarContador() {
-      const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-      contadorCarrito.textContent = total;
-    }
+    // Tu código anterior se mantiene...
 
     function abrirResumen() {
       listaPedido.innerHTML = '';
       if (carrito.length === 0) {
         listaPedido.innerHTML = '<p>Tu carrito está vacío.</p>';
       } else {
+        let detalles = '';
         carrito.forEach(item => {
           const div = document.createElement('div');
           div.className = 'pedido-item';
           div.innerHTML = `<span>${item.producto}</span><span>x${item.cantidad}</span>`;
           listaPedido.appendChild(div);
+          detalles += `${item.producto} x${item.cantidad}\n`;
         });
+        document.getElementById('detalles-pedido').value = detalles;
       }
       modalResumen.classList.add('active');
     }
@@ -279,6 +102,19 @@
     function cerrarResumen() {
       modalResumen.classList.remove('active');
     }
+
+    function enviarFormulario() {
+      setTimeout(() => {
+        modalResumen.classList.remove('active');
+        document.getElementById('modal-confirmacion').classList.add('active');
+        carrito = [];
+        actualizarContador();
+      }, 500); // Espera 0.5s para mostrar confirmación
+      return true;
+    }
+
+    function cerrarConfirmacion() {
+      document.getElementById('modal-confirmacion').classList.remove('active');
+    }
   </script>
 </body>
-</html>
