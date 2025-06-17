@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -91,10 +90,12 @@
       border: 1px solid var(--light-gray);
     }
 
-    .producto img {
+    /* Ajuste para las imágenes de productos individuales */
+    .producto .product-info img {
         width: 80px; /* Más pequeño para el listado de productos */
         height: 80px;
         margin-right: 10px;
+        flex-shrink: 0; /* Evita que la imagen se encoja */
     }
 
     .grupo div, .producto span {
@@ -112,7 +113,7 @@
     .producto .product-info {
         display: flex;
         align-items: center;
-        justify-content: center; /* Centrar info horizontalmente */
+        /* justify-content: center;  Eliminado para alinear a la izquierda */
         flex-grow: 1; /* Para que ocupe espacio y el botón quede abajo */
         margin-bottom: 10px;
         text-align: left;
@@ -121,6 +122,7 @@
     
     .product-details {
         flex-grow: 1;
+        padding-right: 5px; /* Pequeño padding para que no se pegue al borde */
     }
 
     .producto button {
@@ -266,6 +268,9 @@
       text-align: left;
       padding: 25px;
       box-sizing: border-box; /* Incluir padding en el ancho */
+      display: flex; /* Usar flexbox para organizar el contenido */
+      flex-direction: column; /* Apilar elementos verticalmente */
+      max-height: 95vh; /* Asegurar que el modal no sea más alto que la vista */
     }
     #modal-resumen h2 {
       text-align: center;
@@ -280,10 +285,11 @@
       padding: 8px 12px;
       border-radius: 6px;
       cursor: pointer;
-      float: right;
+      position: absolute; /* Posicionamiento absoluto para que esté siempre visible */
+      top: 10px;
+      right: 10px;
       font-weight: 600;
-      margin-top: -15px; /* Ajuste para superponer un poco */
-      margin-right: -10px;
+      z-index: 10; /* Asegurar que esté por encima del contenido */
     }
     #modal-resumen #cerrar-resumen:hover {
       background-color: #b0b0b0;
@@ -294,7 +300,7 @@
       align-items: center;
       margin-bottom: 12px;
       gap: 10px;
-      flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+      flex-wrap: nowrap; /* Evita que los elementos se envuelvan a menos que se defina en media query */
       padding-bottom: 10px;
       border-bottom: 1px dashed #eee;
     }
@@ -321,15 +327,17 @@
       border-radius: 5px;
       font-weight: 600;
       font-size: 0.9em;
+      flex-shrink: 0; /* Evita que el botón se encoja */
     }
     .pedido-item button:hover {
       background: #c82333;
     }
     #modal-resumen #lista-pedido {
-        max-height: 250px; /* Limitar altura de la lista de productos */
+        flex-grow: 1; /* Permite que la lista de pedido ocupe el espacio disponible */
         overflow-y: auto; /* Scroll si hay muchos productos */
         padding-right: 10px; /* Espacio para la barra de scroll */
         margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch; /* Suavizar scroll en iOS */
     }
     #modal-resumen #lista-pedido::-webkit-scrollbar {
         width: 8px;
@@ -347,6 +355,7 @@
         margin-top: 20px;
         padding-top: 20px;
         border-top: 1px solid var(--medium-gray);
+        flex-shrink: 0; /* Evita que el formulario se encoja si la lista es muy larga */
     }
     #formulario-pedido label {
       display: block;
@@ -433,27 +442,34 @@
         width: auto; /* Permitir que la grilla controle el ancho */
         padding: 10px;
       }
-      .grupo img, .producto img {
+      .grupo img {
         height: 100px;
       }
-      .producto img {
-          width: 70px;
-          height: 70px;
+      /* Productos individuales: se apilan imagen y texto */
+      .producto .product-info {
+        flex-direction: column; /* Apilar imagen y texto */
+        align-items: center; /* Centrar items */
+        text-align: center;
       }
-      .grupo div, .producto span {
-        font-size: 1em;
+      .producto .product-info img {
+          margin-right: 0;
+          margin-bottom: 10px; /* Espacio entre imagen y texto */
+          width: 80px;
+          height: 80px;
       }
+
       .modal-content {
         padding: 20px;
       }
       #modal-resumen .modal-content {
           padding: 15px;
       }
+      /* En móviles, los ítems del pedido también se apilan */
       .pedido-item {
         flex-direction: column; /* Apilar elementos en móvil */
         align-items: flex-start;
-        border-bottom: none; /* Quitar borde para no cortar elementos apilados */
-        padding-bottom: 0;
+        border-bottom: 1px dashed #eee; /* Mantener borde para separación */
+        padding-bottom: 10px;
       }
       .pedido-item span, .pedido-item input, .pedido-item button {
         width: 100%;
@@ -481,12 +497,12 @@
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 10px;
       }
-      .grupo img, .producto img {
+      .grupo img {
         height: 80px;
       }
-      .producto img {
-          width: 60px;
-          height: 60px;
+      .producto .product-info img {
+          width: 70px;
+          height: 70px;
       }
       .modal-content {
         padding: 15px;
@@ -560,7 +576,7 @@
     "Extensiones para cabello": "https://via.placeholder.com/150?text=Extensione",
     "Accesorios para bebés": "https://via.placeholder.com/150?text=Bebés",
     "Producto escolar": "https://via.placeholder.com/150?text=Escolar",
-    "Mochilas": "https://via.placeholder.com/alvaroesau/A-Y_Variedades/main/m20.jpg",
+    "Mochilas": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/m20.jpg", /* URL corregida */
     "Peluches": "https://via.placeholder.com/150?text=Peluches",
     "Mueblería": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M7.jpg"
   };
@@ -574,7 +590,7 @@
     "Extensión rizada": "https://via.placeholder.com/150?text=Extensión",
     "Chupete": "https://via.placeholder.com/150?text=Chupete",
     "Cuaderno": "https://via.placeholder.com/150?text=Cuaderno",
-    "Mochila casual": "https://via.placeholder.com/alvaroesau/A-Y_Variedades/main/m18.jpg",
+    "Mochila casual": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/m18.jpg", /* URL corregida */
     "Osito": "https://via.placeholder.com/150?text=Osito",
     "frocen": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M1.jpg",
     "caty": "https://raw.githubusercontent.com/alvaroesau/A-Y_Variedades/main/M2.jpg",
@@ -618,7 +634,7 @@
 
   const gruposContainer = document.getElementById('grupos-container');
   const productosContainer = document.getElementById('productos-container');
-  const modalCantidad = document.getElementById('modal-cantidad'); // Renombrado para claridad
+  const modalCantidad = document.getElementById('modal-cantidad'); 
   const modalProductoNombre = document.getElementById('modal-producto-nombre');
   const cantidadInput = document.getElementById('cantidad-input');
   const agregarCarritoBtn = document.getElementById('agregar-carrito-btn');
@@ -646,7 +662,7 @@
   });
 
   function mostrarProductos(grupo) {
-    productosContainer.innerHTML = `<h2>Productos en ${grupo}</h2>`; // Título para la sección de productos
+    productosContainer.innerHTML = `<h2>Productos en ${grupo}</h2>`; 
     tienda[grupo].forEach(producto => {
       const prodDiv = document.createElement('div');
       prodDiv.className = 'producto';
@@ -670,27 +686,27 @@
 
   function verImagen(url) {
     imagenAmpliada.src = url;
-    modalImagen.classList.add('active'); // Usar clase 'active'
+    modalImagen.classList.add('active'); 
   }
 
   function cerrarImagenAmpliada() {
-    modalImagen.classList.remove('active'); // Usar clase 'active'
+    modalImagen.classList.remove('active'); 
   }
 
   function abrirModalCantidad(producto) {
     productoActual = producto;
     modalProductoNombre.textContent = producto;
     cantidadInput.value = 1;
-    modalCantidad.classList.add('active'); // Usar clase 'active'
+    modalCantidad.classList.add('active'); 
   }
 
   function cerrarModalCantidad() {
-    modalCantidad.classList.remove('active'); // Usar clase 'active'
+    modalCantidad.classList.remove('active'); 
   }
 
   agregarCarritoBtn.addEventListener('click', () => {
     const cantidad = parseInt(cantidadInput.value);
-    if (isNaN(cantidad) || cantidad < 1) { // Mejorar validación
+    if (isNaN(cantidad) || cantidad < 1) { 
       alert("Ingresa una cantidad válida.");
       return;
     }
@@ -741,7 +757,7 @@
     const totalDiv = document.createElement('div');
     totalDiv.style.marginTop = '15px';
     totalDiv.style.fontWeight = 'bold';
-    totalDiv.style.textAlign = 'right'; /* Alinear el total a la derecha */
+    totalDiv.style.textAlign = 'right'; 
     totalDiv.style.paddingTop = '10px';
     totalDiv.style.borderTop = '1px solid var(--medium-gray)';
     totalDiv.textContent = `Total General: $${totalGeneral.toFixed(2)}`;
@@ -757,16 +773,15 @@
 
   function cambiarCantidad(index, nuevaCantidad) {
     const valor = parseInt(nuevaCantidad);
-    if (isNaN(valor) || valor < 1) { // Mejorar validación
+    if (isNaN(valor) || valor < 1) { 
       alert("Cantidad mínima es 1.");
-      // Restaurar el valor anterior si la entrada no es válida
       const inputElement = document.querySelector(`.pedido-item:nth-child(${index + 1}) input`);
       if (inputElement) inputElement.value = carrito[index].cantidad;
       return;
     }
     carrito[index].cantidad = valor;
-    abrirResumen(); // Volver a renderizar para actualizar subtotales
-    actualizarContador(); // Actualizar contador principal
+    abrirResumen(); 
+    actualizarContador(); 
   }
 
   function eliminarProducto(index) {
@@ -812,8 +827,7 @@
     formData.append("Pedido Completo", textareaDetalles.value);
 
     // Aquí la URL de tu FormSubmit con tu correo
-    // ¡Asegúrate de que este correo sea el que tienes configurado y verificado en FormSubmit!
-    const url = "https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com"; // <-- Tu correo de FormSubmit
+    const url = "https://formsubmit.co/ajax/yoselyn96vasquez@gmail.com"; 
 
     fetch(url, {
       method: "POST",
@@ -823,15 +837,13 @@
     .then(response => {
       if (response.ok) {
         alert("¡Pedido enviado correctamente! Gracias por tu compra.");
-        carrito = []; // Limpiar carrito
-        actualizarContador(); // Actualizar contador del carrito
-        modalResumen.classList.remove('active'); // Cerrar modal de resumen
-        // Opcional: Volver a la vista inicial de grupos o limpiar productos
+        carrito = []; 
+        actualizarContador(); 
+        modalResumen.classList.remove('active'); 
         productosContainer.innerHTML = ''; 
         gruposContainer.scrollIntoView({ behavior: "smooth" }); 
-        formularioPedido.reset(); // Resetear el formulario (nombre, teléfono)
+        formularioPedido.reset(); 
       } else {
-        // Manejar errores de FormSubmit
         return response.json().then(data => {
           throw new Error(data.message || "Error al enviar el pedido a FormSubmit. Por favor, verifica la configuración.");
         });
